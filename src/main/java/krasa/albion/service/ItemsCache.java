@@ -28,10 +28,30 @@ public class ItemsCache {
 					continue;
 				}
 				allCodes.add(code);
-
-				if (code.contains("@") && itemsByCode.containsKey(StringUtils.substringBefore(code, "@"))) {
-					continue;
+				MarketItem e = new MarketItem(split);
+				if (itemsByCode.containsKey(e.getCode())) {
+					throw new RuntimeException(e.toString());
 				}
+				itemsByCode.put(e.getCode(), e);
+
+
+				if (itemsByName.containsKey(e.getName())) {
+					if (!e.getCode().contains("@")) {
+						log.warn("duplicate name: " + e);
+					}
+				} else {
+					itemsByName.put(e.getName(), e);
+				}
+
+
+//				if (code.contains("@") 
+//						&& itemsByName.containsKey(split[2])
+////						&& itemsByCode.containsKey(StringUtils.substringBefore(code, "@"))
+//				
+//				) {
+//					log.warn("ignoring "+string);
+//					continue;
+//				}
 
 
 //				String s = StringUtils.substringBeforeLast(code, "@");
@@ -40,13 +60,7 @@ public class ItemsCache {
 //				}
 
 
-				MarketItem e = new MarketItem(split);
 				items.add(e);
-				itemsByCode.put(e.getCode(), e);
-				if (itemsByName.containsKey(e.getName())) {
-					log.warn("duplicate name: " + e);
-				}
-				itemsByName.put(e.getName(), e);
 			} else {
 				//				log.warn(Arrays.toString(split));
 			}
@@ -67,7 +81,7 @@ public class ItemsCache {
 	}
 
 	public String getName(String item_id) {
-		MarketItem marketItem = itemsByCode.get(StringUtils.substringBefore(item_id, "@"));
+		MarketItem marketItem = itemsByCode.get(item_id);
 		if (marketItem == null) {
 			return item_id;
 		}
@@ -100,6 +114,10 @@ public class ItemsCache {
 	}
 
 	public MarketItem getItemByName(String newValue) {
-		return itemsByName.get(newValue);
+		MarketItem marketItem = itemsByName.get(newValue);
+		if (marketItem == null) {
+			marketItem = itemsByName.get(StringUtils.substringBefore(newValue, "@"));
+		}
+		return marketItem;
 	}
 }

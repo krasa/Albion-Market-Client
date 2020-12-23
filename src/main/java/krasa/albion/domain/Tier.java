@@ -1,4 +1,4 @@
-package krasa.albion.controller;
+package krasa.albion.domain;
 
 import krasa.albion.service.MarketItem;
 import org.apache.commons.lang3.StringUtils;

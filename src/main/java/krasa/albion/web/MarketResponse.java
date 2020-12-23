@@ -1,7 +1,9 @@
 package krasa.albion.web;
 
+import krasa.albion.domain.Quality;
 import krasa.albion.service.ItemsCache;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.beans.Transient;
 
@@ -136,7 +138,7 @@ public class MarketResponse {
 	}
 
 	public String toString() {
-		return ReflectionToStringBuilder.toString(this);
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 

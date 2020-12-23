@@ -16,9 +16,9 @@ import java.util.List;
 
 @Component
 public class Storage {
-	public static final Path STORAGE = Paths.get("esoWatch.json");
-	public static final Path STORAGE_OLD = Paths.get("esoWatch.json.old");
-	public static final Path STORAGE_TMP = Paths.get("esoWatch.json.tmp");
+	public static final Path STORAGE = Paths.get("settings.json");
+	public static final Path STORAGE_OLD = Paths.get("settings.json.old");
+	public static final Path STORAGE_TMP = Paths.get("settings.json.tmp");
 
 	public void save(TextField name, ListView cities, ListView tier, ListView quality) {
 		StorageData storageData = new StorageData();

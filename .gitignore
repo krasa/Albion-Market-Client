@@ -1,5 +1,8 @@
 ao-bin-dumps/
 
+settings.json
+settings.json.old
+
 HELP.md
 logs/
 target/

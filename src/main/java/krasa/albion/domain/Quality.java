@@ -1,6 +1,6 @@
-package krasa.albion.web;
+package krasa.albion.domain;
 
-class Quality {
+public class Quality {
 	public static int asCode(String s) {
 		switch (s) {
 			case ("Normal"):

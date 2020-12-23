@@ -22,7 +22,7 @@ import krasa.albion.utils.CustomListViewSkin;
 import krasa.albion.utils.ThreadDump;
 import krasa.albion.utils.ThreadDumper;
 import krasa.albion.web.MarketResponse;
-import krasa.albion.web.RequestDto;
+import krasa.albion.web.PriceStats;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.RangeSlider;
 import org.controlsfx.control.textfield.TextFields;
@@ -37,7 +37,10 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 @Component
@@ -90,15 +93,15 @@ public class MainController implements Initializable, DisposableBean {
 
 
 			addSellPriceColumn("Sell Price", 200);
-			addColumn("sell_price_min_date");
-			addColumn("sell_price_max_date");
+			addDateColumn("sell_price_min_date");
+			addDateColumn("sell_price_max_date");
 //			addPriceColumn("sell_price_min", 100);
 //			addPriceColumn("sell_price_max", 100);
 //			addPriceColumn("buy_price_min", 100);
 //			addPriceColumn("buy_price_max", 100);
 			addBuyPriceColumn("Buy Price", 200);
-			addColumn("buy_price_min_date");
-			addColumn("buy_price_max_date");
+			addDateColumn("buy_price_min_date");
+			addDateColumn("buy_price_max_date");
 			addColumn("item_id");
 
 			table.setItems(FXCollections.observableArrayList());
@@ -146,12 +149,13 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 
+
 	@FXML
 	public void check(ActionEvent actionEvent) {
 
 		String text = name.getText();
 		for (MarketItem item : itemsCache.getEligibleItems(text)) {
-			String path = new RequestDto(cities, quality, tier, ip, itemsCache).path(item);
+			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
 			log.info(path);
 			MarketResponse[] forObject = new RestTemplate().getForObject(path, MarketResponse[].class);
 			log.info(Arrays.toString(forObject));
@@ -210,6 +214,36 @@ public class MainController implements Initializable, DisposableBean {
 		addColumn(propertyName, 200);
 	}
 
+	private void addDateColumn(String propertyName) {
+		TableColumn<MarketItem, String> column = new TableColumn(propertyName);
+		column.setPrefWidth(140);
+		column.setCellValueFactory(new PropertyValueFactory(propertyName));
+		column.setCellFactory(c -> {
+			TableCell<MarketItem, String> cell = new TableCell<MarketItem, String>() {
+				private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+				private SimpleDateFormat to = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					if (empty || "0001-01-01T00:00:00".equals(item)) {
+						setText(null);
+					} else {
+						try {
+							setText(to.format(format.parse(item)));
+						} catch (ParseException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				}
+			};
+
+			return cell;
+		});
+		table.getColumns().add(column);
+//		column.setStyle("-fx-alignment: CENTER-RIGHT;");
+	}
+
 	protected void addColumn(String propertyName, int width) {
 		TableColumn<MarketItem, String> column = new TableColumn(propertyName);
 		column.setPrefWidth(width);
@@ -228,7 +262,7 @@ public class MainController implements Initializable, DisposableBean {
 				return new SimpleStringProperty(format(param.getValue().getSell_price_min()) + " - " + format(param.getValue().getSell_price_max()));
 			}
 		});
-
+		column.setComparator(new PriceComparator());
 		table.getColumns().add(column);
 	}
 
@@ -242,7 +276,7 @@ public class MainController implements Initializable, DisposableBean {
 				return new SimpleStringProperty(format(param.getValue().getBuy_price_max()) + " - " + format(param.getValue().getBuy_price_min()));
 			}
 		});
-
+		column.setComparator(new PriceComparator());
 		table.getColumns().add(column);
 	}
 
@@ -281,7 +315,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void web(ActionEvent actionEvent) {
 		for (MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new RequestDto(cities, quality, tier, ip, itemsCache).path(item);
+			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
 
 			SpringbootJavaFxApplication instance = SpringbootJavaFxApplication.getInstance();
 			HostServicesDelegate hostServices = HostServicesDelegate.getInstance(instance);
@@ -291,9 +325,25 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void test(ActionEvent actionEvent) {
 		for (MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new RequestDto(cities, quality, tier, ip, itemsCache).path(item);
+			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
 
 			System.err.println(path);
+		}
+	}
+
+	private static class PriceComparator implements Comparator<String> {
+		@Override
+		public int compare(String o1, String o2) {
+			try {
+				String[] split = o1.split(" - ");
+				String[] split2 = o2.split(" - ");
+				int i = NumberFormat.getInstance().parse(split[0]).intValue();
+
+				int i2 = NumberFormat.getInstance().parse(split2[0]).intValue();
+				return i - i2;
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }

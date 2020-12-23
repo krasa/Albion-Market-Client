@@ -1,6 +1,7 @@
 package krasa.albion.service;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class MarketItem {
 	private String name;
@@ -38,7 +39,7 @@ public class MarketItem {
 	}
 
 	public String toString() {
-		return ReflectionToStringBuilder.toString(this);
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	public boolean isMap() {
