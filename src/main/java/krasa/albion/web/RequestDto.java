@@ -46,7 +46,7 @@ public class RequestDto {
 		}
 
 		sb.append("?");
-		if (!cities.isEmpty()) {
+		if (!cities.isEmpty() && !cities.contains("---")) {
 			sb.append("locations=");
 			for (String city : cities) {
 				sb.append(city);

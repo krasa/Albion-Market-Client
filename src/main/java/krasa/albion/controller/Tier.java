@@ -18,18 +18,19 @@ public class Tier {
 			return code;
 		}
 		if (tier.contains(".")) {
-			String[] split = tier.split("\\.");
+			String[] tierSplit = tier.split("\\.");
+			String enchant = tierSplit[1];
+			String tier = tierSplit[0];
 
 			if (item.isMap()) {
-				code = StringUtils.substringBeforeLast(code, "_") + "_" + split[1];
-				code = code + "_+" + split[1];
+				code = StringUtils.substringBeforeLast(code, "_") + "_" + (Integer.parseInt(enchant) + 1);
 			}
 
 
-			if (split[1].equals("0")) {
-				return "T" + split[0] + code;
+			if (enchant.equals("0")) {
+				return "T" + tier + code;
 			} else {
-				return "T" + split[0] + code + "@" + split[1];
+				return "T" + tier + code + "@" + enchant;
 			}
 		} else {
 			return "T" + tier + code;

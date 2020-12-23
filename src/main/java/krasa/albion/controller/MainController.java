@@ -102,7 +102,9 @@ public class MainController implements Initializable, DisposableBean {
 			addColumn("item_id");
 
 			table.setItems(FXCollections.observableArrayList());
-			cities.setItems(FXCollections.observableArrayList("Lymhurst",
+			cities.setItems(FXCollections.observableArrayList(
+					"---",
+					"Lymhurst",
 					"Fort Sterling",
 					"Caerleon",
 					"Martlock",

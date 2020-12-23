@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import krasa.albion.AlbionMarketClientApplication;
 import krasa.albion.controller.ErrorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ public class Notifications {
 			controller.setErrorText(text);
 
 			Scene scene = new Scene(root, 800, 400);
-			String styleSheetURL = SpringbootJavaFxApplication.class.getResource("dark.css").toString();
+			String styleSheetURL = AlbionMarketClientApplication.class.getResource("dark.css").toString();
 
 			scene.getStylesheets().add(styleSheetURL);
 
