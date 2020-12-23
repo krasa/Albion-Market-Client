@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="krasa.albion.controller.MainController">
+
+    <top>
+        <FlowPane hgap="10.0" prefHeight="45.0" prefWidth="380.0" vgap="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <TextField fx:id="name" prefHeight="25.0" prefWidth="600.0"/>
+                <Button fx:id="checkButton" mnemonicParsing="false" onAction="#check" prefHeight="25.0" prefWidth="65.0"
+                        text="Check"/>
+                <Button mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="65.0" text="Clear"/>
+                <Button mnemonicParsing="false" onAction="#web" prefHeight="25.0" prefWidth="65.0" text="Web"/>
+                <Button mnemonicParsing="false" onAction="#test" prefHeight="25.0" prefWidth="65.0" text="Test"/>
+                <TextField fx:id="code" prefHeight="25.0" prefWidth="300.0"/>
+            </children>
+            <padding>
+                <Insets left="10.0" top="10.0"/>
+            </padding>
+        </FlowPane>
+    </top>
+    <left>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <!--                <Slider max="1500.0" min="700.0" fx:id="ip" />-->
+                <ListView fx:id="cities" minHeight="140.0" prefHeight="140.0" prefWidth="200.0"/>
+                <Separator/>
+                <ListView fx:id="quality" minHeight="120.0" prefHeight="120.0" prefWidth="200.0"/>
+                <Separator/>
+                <ListView fx:id="tier" prefHeight="400.0" prefWidth="200.0"/>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <VBox>
+            <children>
+                <TableView fx:id="table" VBox.vgrow="ALWAYS" prefWidth="800.0">
+                </TableView>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

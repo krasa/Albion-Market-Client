@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+    <meta name="description" content="Find seller/buyers without going through tons of loading screens"/>
+
+
+    <title>Search - Tamriel Trade Centre</title>
+    <link href="/Content/css?v=EQZUfDyfAGhXtYjNAJo723QJjbpK0gk3LHGZJKCiQ9I1" rel="stylesheet"/>
+
+    <script src="/bundles/modernizr?v=wBEWDufH_8Md-Pbioxomt90vm6tJN2Pyy9u9zHtWsPo1"></script>
+
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9467209390734812",
+            enable_page_level_ads: true
+        });
+    </script>
+</head>
+
+<body>
+<div id="fb-root"></div>
+<script>
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a id="logo" class="navbar-brand" href="/">
+                <img src="/Logo.png" alt="Home"/>
+            </a>
+
+            <p id="nav-header-site-name" class="navbar-text visible-xs">Tamriel Trade Centre</p>
+        </div>
+
+        <div class="collapse navbar-collapse" id="topNavBar">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/pc/Trade/Search">
+                        <span class="glyphicon glyphicon-search" style="top:3px;"></span>
+                        <span>Search</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Addon <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="/download">
+                                <span class="glyphicon glyphicon-download-alt" style="top:3px;"></span>
+                                <span>Download</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/pc/Trade/WebClient">
+                                <span class="glyphicon glyphicon-globe" style="top:3px;"></span>
+                                <span>Web Client (Beta)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Language <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+
+                            <a href="https://eu.tamrieltradecentre.com:443/pc/Trade/Search?lang=en-US">English</a>
+                        </li>
+                        <li>
+
+                            <a href="https://eu.tamrieltradecentre.com:443/pc/Trade/Search?lang=de-DE">Deutsch</a>
+                        </li>
+                        <li>
+
+                            <a href="https://eu.tamrieltradecentre.com:443/pc/Trade/Search?lang=fr-FR">Français</a>
+                        </li>
+                        <li>
+
+                            <a href="https://eu.tamrieltradecentre.com:443/pc/Trade/Search?lang=ru-RU">русский</a>
+                        </li>
+                        <li>
+
+                            <a href="https://eu.tamrieltradecentre.com:443/pc/Trade/Search?lang=zh-CN">简体中文</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li id="notification-dropdown" class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-envelope" style="top:3px;"></span>
+                        <span class="badge"></span>
+                    </a>
+                    <ul class="dropdown-menu scrollable-menu">
+                    </ul>
+                </li>
+
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">vojta.krasa@gmail.com<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="/manage" title="Manage">Manage Account</a>
+                        </li>
+                        <li>
+                            <a href="/pc/Trade/PostTrade">Post Trade</a>
+                        </li>
+                        <li>
+                            <a href="/pc/Trade/MyTrades">My Trades</a>
+                        </li>
+                        <li>
+                            <a href="/pc/Trade/MyOffers">My Offers</a>
+                        </li>
+                        <li>
+                            <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+
+                            <form action="/account/LogOff" id="logoutForm" method="post"><input
+                                    name="__RequestVerificationToken" type="hidden"
+                                    value="pljP0bRA0GAJdtoap3mdyx-AtJL0IjFnkYMJ54gQkDARA8DtF01iSVujmkB91iZxREmnCRpl2VLZeB7tlBQ1t9PZZ2WZi3I_uh3HVTTNz3mtkOMNS1GYYArB8Ld3whWTIkipfg2"/>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="body">
+    <table class="max-width">
+        <tr>
+            <td></td>
+            <td>
+                <div id="topAds">
+                    <!-- TopResponsive -->
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-9467209390734812"
+                         data-ad-slot="6487768722"
+                         data-ad-format="auto"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <div id="topSocialBtnGroup">
+                    <div class="pull-right">
+                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                            <input type="hidden" name="cmd" value="_s-xclick">
+                            <input type="hidden" name="hosted_button_id" value="Q5GMB5HV8WBGJ">
+                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
+                                   border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
+                                 height="1">
+                        </form>
+                    </div>
+
+                    <div class="fb-like pull-right" data-href="https://www.facebook.com/tamrieltradecentre"
+                         data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
+                    <div class="pull-right">
+                        <a href="https://twitter.com/share" class="twitter-share-button" {count}
+                           data-via="TamTradeCentre" data-hashtags="ESO">Tweet</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr class="align-top">
+            <td>
+                <div class="sidebar"></div>
+            </td>
+            <td class="max-width">
+                <section class="content-wrapper main-content clear-fix">
+                    <div class="glass-panel">
+                        <div id="unblock-ads-msg-alert" class="alert alert-warning alert-dismissable hidden"
+                             role="alert">
+                            <div class="form-group">
+                                TTC will not be able to afford everyday server costs without Ads. If you like TTC and
+                                wish to keep our servers running, please support us by disabling Ads blocker or by
+                                adding TTC into whitelist.<br/><br/>Thank you!
+                            </div>
+
+                            <button type="button" class="btn btn-primary" data-dismiss="alert">Got it</button>
+                        </div>
+
+
+                        <h2 class="text-warning">Search</h2>
+                        <hr/>
+
+                        <form action="/pc/Trade/SearchResult" method="get" target="_blank">
+                            <div class="validation-summary-valid" data-valmsg-summary="true">
+                                <ul>
+                                    <li style="display:none"></li>
+                                </ul>
+                            </div>
+                            <input data-val="true" data-val-number="The field ItemID must be a number." id="ItemID"
+                                   name="ItemID" type="hidden" value=""/>
+                            <div>
+                                <div class="row form-group">
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="SearchType">
+                                            <option value="Sell" selected>Listing</option>
+                                            <option value="PriceCheck">Price Check</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-5">
+                                        <input class="form-control inline-block bold search-auto-complete"
+                                               data-val="true" data-val-length="Item Name cannot exceed 100 characters"
+                                               data-val-length-max="100" id="ItemNamePattern" name="ItemNamePattern"
+                                               placeholder="Search For Item" type="text" value=""/>
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <div class="load-spinner invisible" style="right: 10px; margin-top: 6px;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-5">
+                                        <select name="ItemCategory1ID" class="form-control">
+                                            <option value="">
+                                                All Items
+                                            </option>
+                                            <option value="0">
+                                                Weapon
+                                            </option>
+                                            <option value="1">
+                                                Apparel
+                                            </option>
+                                            <option value="2">
+                                                Soul gem &amp; Glyphs
+                                            </option>
+                                            <option value="3">
+                                                Crafting
+                                            </option>
+                                            <option value="4">
+                                                Food &amp; Potions
+                                            </option>
+                                            <option value="5">
+                                                Other
+                                            </option>
+                                            <option value="6">
+                                                Furnishing
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-5">
+                                        <select name="ItemCategory2ID" class="form-control">
+                                            <option value="" data-associated-category1="4">
+                                                All Consumables
+                                            </option>
+                                            <option value="0" data-associated-category1="0">
+                                                One Hand
+                                            </option>
+                                            <option value="1" data-associated-category1="0">
+                                                Two Hand
+                                            </option>
+                                            <option value="2" data-associated-category1="1">
+                                                Light Armor
+                                            </option>
+                                            <option value="3" data-associated-category1="1">
+                                                Medium Armor
+                                            </option>
+                                            <option value="4" data-associated-category1="1">
+                                                Heavy Armor
+                                            </option>
+                                            <option value="5" data-associated-category1="1">
+                                                Shield
+                                            </option>
+                                            <option value="6" data-associated-category1="1">
+                                                Accessory
+                                            </option>
+                                            <option value="7" data-associated-category1="2">
+                                                Soul Gem
+                                            </option>
+                                            <option value="8" data-associated-category1="2">
+                                                Armor Glyph
+                                            </option>
+                                            <option value="9" data-associated-category1="2">
+                                                Weapon Glyph
+                                            </option>
+                                            <option value="10" data-associated-category1="2">
+                                                Jewelry Glyph
+                                            </option>
+                                            <option value="11" data-associated-category1="3">
+                                                Alchemy
+                                            </option>
+                                            <option value="12" data-associated-category1="3">
+                                                Blacksmithing
+                                            </option>
+                                            <option value="13" data-associated-category1="3">
+                                                Clothing
+                                            </option>
+                                            <option value="14" data-associated-category1="3">
+                                                Enchanting
+                                            </option>
+                                            <option value="15" data-associated-category1="3">
+                                                Provisioning
+                                            </option>
+                                            <option value="16" data-associated-category1="3">
+                                                Woodworking
+                                            </option>
+                                            <option value="17" data-associated-category1="3">
+                                                Motif
+                                            </option>
+                                            <option value="18" data-associated-category1="3">
+                                                Style Material
+                                            </option>
+                                            <option value="19" data-associated-category1="3">
+                                                Armor Trait
+                                            </option>
+                                            <option value="20" data-associated-category1="3">
+                                                Weapon Trait
+                                            </option>
+                                            <option value="21" data-associated-category1="4">
+                                                Food
+                                            </option>
+                                            <option value="22" data-associated-category1="4">
+                                                Drink
+                                            </option>
+                                            <option value="23" data-associated-category1="4">
+                                                Potion
+                                            </option>
+                                            <option value="24" data-associated-category1="5">
+                                                Bait
+                                            </option>
+                                            <option value="25" data-associated-category1="5">
+                                                Tool
+                                            </option>
+                                            <option value="26" data-associated-category1="5">
+                                                Seige
+                                            </option>
+                                            <option value="27" data-associated-category1="5">
+                                                Trophy
+                                            </option>
+                                            <option value="28" data-associated-category1="5">
+                                                Container
+                                            </option>
+                                            <option value="29" data-associated-category1="5">
+                                                Fish
+                                            </option>
+                                            <option value="30" data-associated-category1="3">
+                                                Style Raw Material
+                                            </option>
+                                            <option value="31" data-associated-category1="5">
+                                                Misc
+                                            </option>
+                                            <option value="32" data-associated-category1="4">
+                                                Poison
+                                            </option>
+                                            <option value="33" data-associated-category1="6">
+                                                Crafting Station
+                                            </option>
+                                            <option value="34" data-associated-category1="6">
+                                                Light
+                                            </option>
+                                            <option value="35" data-associated-category1="6">
+                                                Ornamental
+                                            </option>
+                                            <option value="36" data-associated-category1="6">
+                                                Seating
+                                            </option>
+                                            <option value="37" data-associated-category1="6">
+                                                Target Dummy
+                                            </option>
+                                            <option value="38" data-associated-category1="6">
+                                                Recipe
+                                            </option>
+                                            <option value="39" data-associated-category1="3">
+                                                Master Writ
+                                            </option>
+                                            <option value="40" data-associated-category1="6">
+                                                Material
+                                            </option>
+                                            <option value="41" data-associated-category1="3">
+                                                Jewelry Crafting
+                                            </option>
+                                            <option value="42" data-associated-category1="3">
+                                                Jewelry Trait
+                                            </option>
+                                            <option value="43" data-associated-category1="3">
+                                                Raw Trait
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-5">
+                                        <select name="ItemCategory3ID" class="form-control">
+                                            <option value="" data-associated-category2="0">
+                                                All One-Handed
+                                            </option>
+                                            <option value="" data-associated-category2="1">
+                                                All Two-Handed
+                                            </option>
+                                            <option value="" data-associated-category2="2">
+                                                All Pieces
+                                            </option>
+                                            <option value="" data-associated-category2="3">
+                                                All Pieces
+                                            </option>
+                                            <option value="" data-associated-category2="4">
+                                                All Pieces
+                                            </option>
+                                            <option value="" data-associated-category2="6">
+                                                All Accessories
+                                            </option>
+                                            <option value="0" data-associated-category2="0">
+                                                Axe
+                                            </option>
+                                            <option value="1" data-associated-category2="0">
+                                                Mace
+                                            </option>
+                                            <option value="2" data-associated-category2="0">
+                                                Sword
+                                            </option>
+                                            <option value="3" data-associated-category2="0">
+                                                Dagger
+                                            </option>
+                                            <option value="4" data-associated-category2="1">
+                                                Axe
+                                            </option>
+                                            <option value="5" data-associated-category2="1">
+                                                Sword
+                                            </option>
+                                            <option value="6" data-associated-category2="1">
+                                                Mace
+                                            </option>
+                                            <option value="7" data-associated-category2="1">
+                                                Bow
+                                            </option>
+                                            <option value="8" data-associated-category2="1">
+                                                Healing Staff
+                                            </option>
+                                            <option value="9" data-associated-category2="1">
+                                                Flame Staff
+                                            </option>
+                                            <option value="10" data-associated-category2="1">
+                                                Frost Staff
+                                            </option>
+                                            <option value="11" data-associated-category2="1">
+                                                Lightning Staff
+                                            </option>
+                                            <option value="12" data-associated-category2="2">
+                                                Chest
+                                            </option>
+                                            <option value="13" data-associated-category2="2">
+                                                Feet
+                                            </option>
+                                            <option value="14" data-associated-category2="2">
+                                                Hand
+                                            </option>
+                                            <option value="15" data-associated-category2="2">
+                                                Head
+                                            </option>
+                                            <option value="16" data-associated-category2="2">
+                                                Legs
+                                            </option>
+                                            <option value="17" data-associated-category2="2">
+                                                Shoulders
+                                            </option>
+                                            <option value="18" data-associated-category2="2">
+                                                Waist
+                                            </option>
+                                            <option value="19" data-associated-category2="3">
+                                                Chest
+                                            </option>
+                                            <option value="20" data-associated-category2="3">
+                                                Feet
+                                            </option>
+                                            <option value="21" data-associated-category2="3">
+                                                Hand
+                                            </option>
+                                            <option value="22" data-associated-category2="3">
+                                                Head
+                                            </option>
+                                            <option value="23" data-associated-category2="3">
+                                                Legs
+                                            </option>
+                                            <option value="24" data-associated-category2="3">
+                                                Shoulders
+                                            </option>
+                                            <option value="25" data-associated-category2="3">
+                                                Waist
+                                            </option>
+                                            <option value="26" data-associated-category2="4">
+                                                Chest
+                                            </option>
+                                            <option value="27" data-associated-category2="4">
+                                                Feet
+                                            </option>
+                                            <option value="28" data-associated-category2="4">
+                                                Hand
+                                            </option>
+                                            <option value="29" data-associated-category2="4">
+                                                Head
+                                            </option>
+                                            <option value="30" data-associated-category2="4">
+                                                Legs
+                                            </option>
+                                            <option value="31" data-associated-category2="4">
+                                                Shoulders
+                                            </option>
+                                            <option value="32" data-associated-category2="4">
+                                                Waist
+                                            </option>
+                                            <option value="33" data-associated-category2="6">
+                                                Appearance
+                                            </option>
+                                            <option value="34" data-associated-category2="6">
+                                                Neck
+                                            </option>
+                                            <option value="35" data-associated-category2="6">
+                                                Ring
+                                            </option>
+                                            <option value="36" data-associated-category2="11">
+                                                Potion Base
+                                            </option>
+                                            <option value="37" data-associated-category2="11">
+                                                Reagent
+                                            </option>
+                                            <option value="38" data-associated-category2="12">
+                                                Raw Material
+                                            </option>
+                                            <option value="39" data-associated-category2="12">
+                                                Material
+                                            </option>
+                                            <option value="40" data-associated-category2="12">
+                                                Temper
+                                            </option>
+                                            <option value="41" data-associated-category2="13">
+                                                Raw Material
+                                            </option>
+                                            <option value="42" data-associated-category2="13">
+                                                Material
+                                            </option>
+                                            <option value="43" data-associated-category2="13">
+                                                Tannin
+                                            </option>
+                                            <option value="44" data-associated-category2="14">
+                                                Aspect Runestone
+                                            </option>
+                                            <option value="45" data-associated-category2="14">
+                                                Essence Runestone
+                                            </option>
+                                            <option value="46" data-associated-category2="14">
+                                                Potency Runestone
+                                            </option>
+                                            <option value="47" data-associated-category2="15">
+                                                Ingredient
+                                            </option>
+                                            <option value="48" data-associated-category2="15">
+                                                Recipe
+                                            </option>
+                                            <option value="49" data-associated-category2="16">
+                                                Raw Material
+                                            </option>
+                                            <option value="50" data-associated-category2="16">
+                                                Material
+                                            </option>
+                                            <option value="51" data-associated-category2="16">
+                                                Resin
+                                            </option>
+                                            <option value="52" data-associated-category2="11">
+                                                Poison Base
+                                            </option>
+                                            <option value="53" data-associated-category2="41">
+                                                Raw Material
+                                            </option>
+                                            <option value="54" data-associated-category2="41">
+                                                Material
+                                            </option>
+                                            <option value="55" data-associated-category2="41">
+                                                Plating
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-5">
+                                        <select name="ItemTraitID" class="form-control">
+                                            <option value="">
+                                                Any Trait
+                                            </option>
+                                            <option value="0">
+                                                Powered
+                                            </option>
+                                            <option value="1">
+                                                Charged
+                                            </option>
+                                            <option value="2">
+                                                Precise
+                                            </option>
+                                            <option value="3">
+                                                Infused
+                                            </option>
+                                            <option value="4">
+                                                Defending
+                                            </option>
+                                            <option value="5">
+                                                Training
+                                            </option>
+                                            <option value="6">
+                                                Sharpened
+                                            </option>
+                                            <option value="7">
+                                                Decisive
+                                            </option>
+                                            <option value="8">
+                                                Sturdy
+                                            </option>
+                                            <option value="9">
+                                                Impenetrable
+                                            </option>
+                                            <option value="10">
+                                                Reinforced
+                                            </option>
+                                            <option value="11">
+                                                Well Fitted
+                                            </option>
+                                            <option value="12">
+                                                Invigorating
+                                            </option>
+                                            <option value="13">
+                                                Divines
+                                            </option>
+                                            <option value="14">
+                                                Nirnhoned
+                                            </option>
+                                            <option value="15">
+                                                Intricate
+                                            </option>
+                                            <option value="16">
+                                                Ornate
+                                            </option>
+                                            <option value="17">
+                                                Arcane
+                                            </option>
+                                            <option value="18">
+                                                Healthy
+                                            </option>
+                                            <option value="19">
+                                                Robust
+                                            </option>
+                                            <option value="20">
+                                                Special
+                                            </option>
+                                            <option value="21">
+                                                Bloodthirsty
+                                            </option>
+                                            <option value="22">
+                                                Harmony
+                                            </option>
+                                            <option value="23">
+                                                Protective
+                                            </option>
+                                            <option value="24">
+                                                Swift
+                                            </option>
+                                            <option value="25">
+                                                Triune
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-5">
+                                        <select name="ItemQualityID" class="form-control">
+                                            <option class="item-quality-none" value="" selected>
+                                                Any Quality
+                                            </option>
+                                            <option value="0" class="item-quality-normal">
+                                                Normal
+                                            </option>
+                                            <option value="1" class="item-quality-fine">
+                                                Fine
+                                            </option>
+                                            <option value="2" class="item-quality-superior">
+                                                Superior
+                                            </option>
+                                            <option value="3" class="item-quality-epic">
+                                                Epic
+                                            </option>
+                                            <option value="4" class="item-quality-legendary">
+                                                Legendary
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-5">
+                                        <div class="row">
+                                            <div class="col-sm-2 nowrap">
+                                                Level:
+                                            </div>
+
+                                            <div class="col-sm-1">
+                                                <input class="champion-point-checkbox" data-val="true"
+                                                       data-val-required="The IsChampionPoint field is required."
+                                                       id="IsChampionPoint" name="IsChampionPoint" type="checkbox"
+                                                       value="true"/><input name="IsChampionPoint" type="hidden"
+                                                                            value="false"/>
+                                                <label class="champion-point-label" for="IsChampionPoint"> </label>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <input class="form-control inline-block" data-val="true"
+                                                       data-val-number="The field Level must be a number."
+                                                       data-val-range="Level must be between 0 and 1800"
+                                                       data-val-range-max="1800" data-val-range-min="0" id="LevelMin"
+                                                       name="LevelMin" type="text" value=""/>
+                                            </div>
+
+                                            <div class="col-sm-1">
+                                                ~
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <input class="form-control inline-block" data-val="true"
+                                                       data-val-number="The field Level must be a number."
+                                                       data-val-range="Level must be between 0 and 1800"
+                                                       data-val-range-max="1800" data-val-range-min="0" id="LevelMax"
+                                                       name="LevelMax" type="text" value=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <span class="field-validation-valid" data-valmsg-for="LevelMin"
+                                          data-valmsg-replace="true"></span>
+                                    <span class="field-validation-valid" data-valmsg-for="LevelMax"
+                                          data-valmsg-replace="true"></span>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-5">
+                                        <div class="row">
+                                            <div class="col-sm-2 nowrap">
+                                                Writ Voucher:
+                                            </div>
+
+                                            <div class="col-sm-4 col-sm-offset-1">
+                                                <input class="form-control inline-block" data-val="true"
+                                                       data-val-number="The field MasterWritVoucherMin must be a number."
+                                                       id="MasterWritVoucherMin" name="MasterWritVoucherMin" type="text"
+                                                       value=""/>
+                                            </div>
+
+                                            <div class="col-sm-1">
+                                                ~
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <input class="form-control inline-block" data-val="true"
+                                                       data-val-number="The field MasterWritVoucherMax must be a number."
+                                                       id="MasterWritVoucherMax" name="MasterWritVoucherMax" type="text"
+                                                       value=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <span class="field-validation-valid" data-valmsg-for="MasterWritVoucherMin"
+                                          data-valmsg-replace="true"></span>
+                                    <span class="field-validation-valid" data-valmsg-for="MasterWritVoucherMax"
+                                          data-valmsg-replace="true"></span>
+                                </div>
+
+                                <div class="row form-group" id="amount-row">
+                                    <div class="col-md-5">
+                                        <div class="row">
+                                            <div class="col-sm-2 nowrap">
+                                                Amount:
+                                            </div>
+
+                                            <div class="col-sm-1">
+                                                <img class="small-icon" src="/Content/icons/amount.png"/>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <input class="form-control inline-block" data-val="true"
+                                                       data-val-number="The field AmountMin must be a number."
+                                                       id="AmountMin" name="AmountMin" type="text" value=""/>
+                                            </div>
+
+                                            <div class="col-sm-1">
+                                                ~
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <input class="form-control inline-block" data-val="true"
+                                                       data-val-number="The field AmountMax must be a number."
+                                                       id="AmountMax" name="AmountMax" type="text" value=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <span class="field-validation-valid" data-valmsg-for="AmountMin"
+                                          data-valmsg-replace="true"></span>
+                                    <span class="field-validation-valid" data-valmsg-for="AmountMax"
+                                          data-valmsg-replace="true"></span>
+                                </div>
+
+                                <div class="row form-group" id="unit-price-row">
+                                    <div class="col-md-5">
+                                        <div class="row">
+                                            <div class="col-sm-2 nowrap">
+                                                Unit Price:
+                                            </div>
+
+                                            <div class="col-sm-1">
+                                                <img class="small-icon" src="/Content/icons/gold.png"/>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <input class="form-control inline-block" data-val="true"
+                                                       data-val-number="The field Price must be a number."
+                                                       data-val-range="Price must be between 0 and 99999999"
+                                                       data-val-range-max="99999999" data-val-range-min="0"
+                                                       id="PriceMin" name="PriceMin" type="text" value=""/>
+                                            </div>
+
+                                            <div class="col-sm-1">
+                                                ~
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <input class="form-control inline-block" data-val="true"
+                                                       data-val-number="The field Price must be a number."
+                                                       data-val-range="Price must be between 0 and 99999999"
+                                                       data-val-range-max="99999999" data-val-range-min="0"
+                                                       id="PriceMax" name="PriceMax" type="text" value=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <span class="field-validation-valid" data-valmsg-for="PriceMin"
+                                          data-valmsg-replace="true"></span>
+                                    <span class="field-validation-valid" data-valmsg-for="PriceMax"
+                                          data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="open-in-new-tab-checkbox" checked="checked"/>
+                                    Open in new tab
+                                </label>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input type="submit" class="btn btn-primary" value="Search"/>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="button" id="reset-btn" class="btn btn-default pull-right"
+                                                   value="Reset"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </td>
+            <td>
+                <div class="sidebar">
+                    <div id="rightAds">
+                        <!-- SideResponsive -->
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-9467209390734812"
+                             data-ad-slot="9572085307"
+                             data-ad-format="auto"></ins>
+                        <script>
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    </div>
+
+                    <div>
+                        <div class="fb-like" data-href="https://www.facebook.com/tamrieltradecentre" data-width="200"
+                             data-layout="box_count" data-action="like" data-show-faces="true" data-share="true"></div>
+                    </div>
+                    <div>
+                        <a href="https://twitter.com/share" class="twitter-share-button" {count}
+                           data-via="TamTradeCentre" data-hashtags="ESO">Tweet</a>
+                    </div>
+                    <div>
+                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                            <input type="hidden" name="cmd" value="_s-xclick">
+                            <input type="hidden" name="hosted_button_id" value="Q5GMB5HV8WBGJ">
+                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
+                                   border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
+                                 height="1">
+                        </form>
+                    </div>
+                </div>
+                <div class="sidebar"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<footer>
+    <div class="content-wrapper">
+        <div class="well">
+            <div class="text-right">
+                <a href="/About">About</a>
+                |
+                <a href="/help">Help</a>
+                |
+                <a href="/Contact">Contact us</a>
+                |
+                <a href="/TermsOfService">Terms of Service</a>
+                |
+                <a href="/PrivacyPolicy">Privacy Policy</a>
+            </div>
+
+            <p>&copy; 2015 by Steven Chen All rights reserved</p>
+            <p>
+                Tamriel Trade Centre was created using content and materials from The Elder Scrolls&#174; Online:
+                Tamriel Unlimited™ &#169; ZeniMax&#174; Online Studios, LLC or its licensors. This site is not
+                affiliated with ZeniMax Online Studios, and ZeniMax Online Studios is not responsible for any of the
+                content on, or the privacy policy of this site.<br/>Windows&#174;, Xbox&#174; and their logos are
+                registered trademarks of Microsoft Corporation<br/>Sony PlayStation&#174; and its logo are registered
+                trademarks of Sony Inc.
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script src="/Scripts/adsbygoogle.js"></script>
+<script src="/bundles/General?v=Z_z8Mbrbfw98SgKJwUcOjRL6iTYSzHlRYh9yk_iwFtk1"></script>
+
+<script src="/bundles/Localization/EN?v=qfGROOVLJwY9kL4XX4hNhymLEqs0LK2-UGwxr7CZ3Cg1"></script>
+
+
+<script src="/bundles/TradeGeneral?v=iRg1fR93lUsaifefeaodJfkWzhrUSqeRkzYrWFC8TVk1"></script>
+
+<script src="/bundles/jqueryval?v=hEGG8cMxk9p0ncdRUOJ-CnKN7NezhnPnWIvn6REucZo1"></script>
+
+<script src="/bundles/Search?v=-ym6lz1WsmcYkib1ojqqX_pSom9f2tI_1XIuCS1lGao1"></script>
+
+
+<script>!function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+    if (!d.getElementById(id)) {
+        js = d.createElement(s);
+        js.id = id;
+        js.src = p + '://platform.twitter.com/widgets.js';
+        fjs.parentNode.insertBefore(js, fjs);
+    }
+}(document, 'script', 'twitter-wjs');</script>
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-70775257-1', 'auto');
+    ga('send', 'pageview');
+</script>
+</body>
+
+</html>

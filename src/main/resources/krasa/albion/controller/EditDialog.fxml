@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="dialog" alignment="CENTER" prefHeight="200.0" prefWidth="1200.0"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="krasa.albion.controller.EditDialogController">
+   <TextArea fx:id="link" prefHeight="200.0" prefWidth="1200.0" wrapText="true"/>
+   <HBox prefHeight="100.0" prefWidth="200.0">
+      <children>
+         <Label text="Exclude:"/>
+         <TextField fx:id="exclude" maxWidth="Infinity"/>
+      </children>
+   </HBox>
+   <HBox prefHeight="100.0" prefWidth="200.0">
+      <children>
+         <Label text="Cycle:"/>
+         <TextField fx:id="cycle" maxWidth="Infinity"/>
+      </children>
+   </HBox>
+   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+      <children>
+         <Button fx:id="okButton" mnemonicParsing="false" text="OK"/>
+
+         <Button fx:id="closeButton" mnemonicParsing="false" text="Close"/>
+      </children>
+      <opaqueInsets>
+         <Insets/>
+      </opaqueInsets>
+   </HBox>
+
+</VBox>

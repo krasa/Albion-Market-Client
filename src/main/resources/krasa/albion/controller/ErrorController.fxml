@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+			fx:controller="krasa.albion.controller.ErrorController">
+	<center>
+		<TextArea fx:id="errorMessage" editable="false" wrapText="true"/>
+	</center>
+	<bottom>
+		<HBox alignment="CENTER">
+			<Group>
+				<children>
+					<Button fx:id="copyAndClose" onAction="#copyAndClose" text="Copy URL and skip"/>
+					<Button fx:id="openAndClose" layoutX="117.0" onAction="#openAndClose" text="Open web and skip"/>
+					<Button layoutX="236.0" onAction="#close" text="OK"/>
+				</children>
+			</Group>
+		</HBox>
+	</bottom>
+</BorderPane>
