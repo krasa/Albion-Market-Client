@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.ListView;
 import krasa.albion.controller.MainController;
+import krasa.albion.domain.HistoryItem;
 import krasa.albion.web.MarketItem;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,7 @@ public class Storage {
 		storageData.ipFrom = mainController.ipFrom.getValue();
 		storageData.ipTo = mainController.ipTo.getValue();
 		storageData.tableItems = mainController.table.getItems();
+		storageData.history.addAll(mainController.history.getItems());
 
 		try {
 			String s = getObjectMapper().writeValueAsString(storageData);
@@ -76,7 +78,7 @@ public class Storage {
 
 
 			for (String city : storageData.cities) {
-				((ListView<String>) mainController.cities).getSelectionModel().select(city);
+				mainController.cities.getSelectionModel().select(city);
 			}
 			for (String city : storageData.quality) {
 				mainController.quality.getSelectionModel().select(city);
@@ -87,7 +89,7 @@ public class Storage {
 			mainController.name.setText(storageData.name);
 			mainController.ipFrom.setValue(storageData.ipFrom);
 			mainController.ipTo.setValue(storageData.ipTo);
-
+			mainController.history.adAll(storageData.history);
 
 			for (MarketItem tableItem : storageData.tableItems) {
 				tableItem.init(mainController.itemsCache);
@@ -107,6 +109,7 @@ public class Storage {
 		private List<String> tier = new ArrayList<>();
 		private List<String> cities = new ArrayList<>();
 		private List<String> quality = new ArrayList<>();
+		private List<HistoryItem> history = new ArrayList<>();
 		private String name = "";
 
 	}

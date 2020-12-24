@@ -69,4 +69,7 @@
             </children>
         </VBox>
     </center>
+    <right>
+        <ListView fx:id="historyListView" minHeight="165.0" prefHeight="165.0" prefWidth="200.0"/>
+    </right>
 </BorderPane>

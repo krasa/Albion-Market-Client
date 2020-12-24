@@ -44,13 +44,17 @@ public class TableClipboardUtils {
 		KeyCodeCombination pasteKeyCodeCompination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY);
 
 		public void handle(final KeyEvent keyEvent) {
+			TableView<?> source = (TableView<?>) keyEvent.getSource();
+			if (keyEvent.getCode() == KeyCode.DELETE) {
+				source.getItems().removeAll(source.getSelectionModel().getSelectedItems());
+			}
 
 			if (copyKeyCodeCompination.match(keyEvent)) {
 
 				if (keyEvent.getSource() instanceof TableView) {
 
 					// copy to clipboard
-					copySelectionToClipboard((TableView<?>) keyEvent.getSource());
+					copySelectionToClipboard(source);
 
 					// event is handled, consume it
 					keyEvent.consume();
@@ -62,7 +66,7 @@ public class TableClipboardUtils {
 				if (keyEvent.getSource() instanceof TableView) {
 
 					// copy to clipboard
-					pasteFromClipboard((TableView<?>) keyEvent.getSource());
+					pasteFromClipboard(source);
 
 					// event is handled, consume it
 					keyEvent.consume();

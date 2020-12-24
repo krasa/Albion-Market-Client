@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,10 +15,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
 import krasa.albion.application.SpringbootJavaFxApplication;
+import krasa.albion.domain.History;
+import krasa.albion.domain.HistoryItem;
 import krasa.albion.domain.PriceComparator;
 import krasa.albion.domain.Tier;
 import krasa.albion.service.ItemsCache;
@@ -45,11 +50,13 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @FxmlView
 public class MainController implements Initializable, DisposableBean {
 	private static final Logger log = LoggerFactory.getLogger(MainController.class);
+	public static final String HISTORY = "history";
 
 
 	@FXML
@@ -61,11 +68,12 @@ public class MainController implements Initializable, DisposableBean {
 	@FXML
 	public TextField name;
 	@FXML
-	public javafx.scene.control.ListView cities;
+	public javafx.scene.control.ListView<String> cities;
 	@FXML
 	public javafx.scene.control.TableView<MarketItem> table;
 	public ListView<String> quality;
 	public ListView<String> tier;
+	public ListView<HistoryItem> historyListView;
 	public RangeSlider ip;
 	public TextField code;
 	public Slider ipFrom;
@@ -81,12 +89,48 @@ public class MainController implements Initializable, DisposableBean {
 	@Autowired
 	private NetworkService networkService;
 	boolean changing;
+	public History history = new History();
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+		historyListView.setOnKeyPressed(keyEvent -> {
+			if (keyEvent.getCode() == KeyCode.DELETE) {
+				historyListView.getItems().removeAll(historyListView.getSelectionModel().getSelectedItem());
+			}
+		});
+		;
 
-		// enable copy/paste
-		TableClipboardUtils.installCopyPasteHandler(table);
+
+		historyListView.setItems(history.getItems());
+		historyListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+					HistoryItem storageData = historyListView.getSelectionModel().getSelectedItem();
+					log.info(storageData.getPath());
+					cities.getSelectionModel().clearSelection();
+					for (String city : storageData.getCities()) {
+						cities.getSelectionModel().select(city);
+					}
+					quality.getSelectionModel().clearSelection();
+					for (String city : storageData.getQuality()) {
+						quality.getSelectionModel().select(city);
+					}
+					tier.getSelectionModel().clearSelection();
+					for (String city : storageData.getTier()) {
+						tier.getSelectionModel().select(city);
+					}
+					name.setText(storageData.getName());
+
+
+					//your code here        
+				} else if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+					check(new ActionEvent(HISTORY, null));
+				}
+			}
+		});
+
+
 		checkButton1.setGraphic(new ImageView(MyUtils.getImage("rerun.png")));
 		checkButton2.setGraphic(new ImageView(MyUtils.getImage("rerun.png")));
 		resetButton.setGraphic(new ImageView(MyUtils.getImage("delete.png")));
@@ -100,10 +144,9 @@ public class MainController implements Initializable, DisposableBean {
 			}
 		});
 
-		tier.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
+		tier.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<String>() {
 			@Override
-			public void handle(MouseEvent event) {
+			public void onChanged(Change<? extends String> c) {
 				if (!changing) {
 					changing = true;
 					ObservableList<String> selectedItems = tier.getSelectionModel().getSelectedItems();
@@ -126,9 +169,9 @@ public class MainController implements Initializable, DisposableBean {
 					}
 					changing = false;
 				}
-
 			}
 		});
+
 		ChangeListener<Number> sliderListener = (observable, oldValue, newValue) -> {
 			//https://wiki.albiononline.com/wiki/Item_Power
 			if (!changing) {
@@ -182,6 +225,12 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	private void initTable() {
+		// enable copy/paste
+		TableClipboardUtils.installCopyPasteHandler(table);
+		table.getSelectionModel().setSelectionMode(
+				SelectionMode.MULTIPLE
+		);
+
 		table.getColumns().clear();
 		addColumn("name", "name", 200);
 		addColumn("tier", "tier", 25);
@@ -245,26 +294,6 @@ public class MainController implements Initializable, DisposableBean {
 		cities.setSkin(new CustomListViewSkin<>(cities));
 	}
 
-
-	@FXML
-	public void check(ActionEvent actionEvent) {
-		String text = name.getText();
-		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(text)) {
-			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
-			log.info(path);
-			cheackPrice(path);
-		}
-
-	}
-
-	private void cheackPrice(String path) {
-		MarketItem[] responses = new RestTemplate().getForObject(path, MarketItem[].class);
-		log.info(Arrays.toString(responses));
-		for (MarketItem response : responses) {
-			response.setRequestPath(path);
-			table.getItems().add(response.init(itemsCache));
-		}
-	}
 
 	@FXML
 	public void remoteDesktop(ActionEvent actionEvent) throws IOException {
@@ -419,9 +448,45 @@ public class MainController implements Initializable, DisposableBean {
 
 	}
 
-	public void clear(ActionEvent actionEvent) {
-		table.getItems().clear();
+	@FXML
+	public void check(ActionEvent actionEvent) {
+		String text = name.getText();
+		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(text)) {
+			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
 
+			if (!HISTORY.equals(actionEvent.getSource())) {
+				history.add(path, this);
+				historyListView.getSelectionModel().clearSelection();
+			}
+
+			log.info(path);
+			checkPrice(actionEvent, path);
+		}
+
+	}
+
+	private void checkPrice(ActionEvent actionEvent, String path) {
+		checkButton1.setDisable(true);
+		checkButton2.setDisable(true);
+
+		CompletableFuture.runAsync(() -> {
+			try {
+				MarketItem[] responses = new RestTemplate().getForObject(path, MarketItem[].class);
+				log.info(Arrays.toString(responses));
+
+				Platform.runLater(() -> {
+					for (MarketItem response : responses) {
+						response.setRequestPath(path);
+						table.getItems().add(response.init(itemsCache));
+					}
+				});
+			} finally {
+				Platform.runLater(() -> {
+					checkButton1.setDisable(false);
+					checkButton2.setDisable(false);
+				});
+			}
+		});
 	}
 
 	public void web(ActionEvent actionEvent) {
@@ -434,11 +499,17 @@ public class MainController implements Initializable, DisposableBean {
 		}
 	}
 
-	public void test(ActionEvent actionEvent) {
+	public void test(ActionEvent actionEvent) throws InterruptedException {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
 			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
+			history.add(path, this);
 			log.info(path);
 		}
+	}
+
+	public void clear(ActionEvent actionEvent) {
+		table.getItems().clear();
+
 	}
 
 	public void reset(ActionEvent actionEvent) {
@@ -468,7 +539,7 @@ public class MainController implements Initializable, DisposableBean {
 
 		for (String path : paths) {
 			if (path != null) {
-				Platform.runLater(() -> cheackPrice(path));
+				checkPrice(actionEvent, path);
 			}
 		}
 
