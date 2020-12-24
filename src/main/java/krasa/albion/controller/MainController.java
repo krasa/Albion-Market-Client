@@ -3,17 +3,21 @@ package krasa.albion.controller;
 import com.sun.javafx.application.HostServicesDelegate;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
 import krasa.albion.application.SpringbootJavaFxApplication;
+import krasa.albion.domain.Tier;
 import krasa.albion.service.ItemsCache;
 import krasa.albion.service.MarketItem;
 import krasa.albion.service.NetworkService;
@@ -61,17 +65,19 @@ public class MainController implements Initializable, DisposableBean {
 	public javafx.scene.control.ListView cities;
 	@FXML
 	public javafx.scene.control.TableView table;
-	public ListView quality;
-	public ListView tier;
+	public ListView<String> quality;
+	public ListView<String> tier;
 	public RangeSlider ip;
 	public TextField code;
+	public Slider ipFrom;
+	public Slider ipTo;
 	@Autowired
 	private ItemsCache itemsCache;
 	@Autowired
 	private Storage storage;
 	@Autowired
 	private NetworkService networkService;
-
+	boolean changing;
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -84,6 +90,70 @@ public class MainController implements Initializable, DisposableBean {
 			}
 		});
 
+		tier.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				if (!changing) {
+					changing = true;
+					ObservableList<String> selectedItems = tier.getSelectionModel().getSelectedItems();
+					int min = Integer.MAX_VALUE;
+					int max = 0;
+
+					for (String item : selectedItems) {
+						int ip = new Tier(item).getIp();
+						min = Math.min(min, ip);
+						max = Math.max(max, ip);
+					}
+					if (max > 0) {
+						ipTo.setValue(max);
+					}
+					if (min < Integer.MAX_VALUE) {
+						ipFrom.setValue(min);
+					}
+					changing = false;
+				}
+
+			}
+		});
+		ChangeListener<Number> sliderListener = (observable, oldValue, newValue) -> {
+			//https://wiki.albiononline.com/wiki/Item_Power
+			if (!changing) {
+
+				double from = ipFrom.getValue();
+				double to = ipTo.getValue();
+
+				MultipleSelectionModel<String> selectionModel = tier.getSelectionModel();
+				selectionModel.clearSelection();
+				for (String item : tier.getItems()) {
+					int ip = new Tier(item).getIp();
+					if (ip >= from
+							&& ip <= to) {
+						selectionModel.select(item);
+					}
+				}
+			}
+		};
+
+		ipFrom.valueProperty().addListener(observable -> {
+			double from = ipFrom.getValue();
+			double to = ipTo.getValue();
+
+			if (from > to) {
+				ipTo.setValue(from);
+			}
+		});
+
+		ipTo.valueProperty().addListener(observable -> {
+			double from = ipFrom.getValue();
+			double to = ipTo.getValue();
+
+			if (from > to) {
+				ipFrom.setValue(to);
+			}
+		});
+		ipFrom.valueProperty().addListener(sliderListener);
+		ipTo.valueProperty().addListener(sliderListener);
 
 		try {
 			addColumn("name", 200);
@@ -119,10 +189,14 @@ public class MainController implements Initializable, DisposableBean {
 			tier.setItems(tiers);
 			tiers.add("---");
 			for (int i = 8; i > 0; i--) {
-				tiers.add("" + i + ".3");
-				tiers.add("" + i + ".2");
-				tiers.add("" + i + ".1");
-				tiers.add("" + i + ".0");
+				if (i > 4) {
+					tiers.add("" + i + ".3");
+					tiers.add("" + i + ".2");
+					tiers.add("" + i + ".1");
+					tiers.add("" + i + ".0");
+				} else {
+					tiers.add("" + i + ".0");
+				}
 			}
 			quality.setItems(FXCollections.observableArrayList(
 					"---",
@@ -339,6 +413,13 @@ public class MainController implements Initializable, DisposableBean {
 			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
 			log.info(path);
 		}
+	}
+
+	public void reset(ActionEvent actionEvent) {
+		name.setText("");
+		cities.getSelectionModel().clearSelection();
+		tier.getSelectionModel().clearSelection();
+		quality.getSelectionModel().clearSelection();
 	}
 
 	private static class PriceComparator implements Comparator<String> {
