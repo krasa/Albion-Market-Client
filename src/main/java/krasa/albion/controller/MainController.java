@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
@@ -23,6 +24,7 @@ import krasa.albion.service.MarketItem;
 import krasa.albion.service.NetworkService;
 import krasa.albion.service.Storage;
 import krasa.albion.utils.CustomListViewSkin;
+import krasa.albion.utils.MyUtils;
 import krasa.albion.utils.ThreadDump;
 import krasa.albion.utils.ThreadDumper;
 import krasa.albion.web.MarketResponse;
@@ -71,6 +73,9 @@ public class MainController implements Initializable, DisposableBean {
 	public TextField code;
 	public Slider ipFrom;
 	public Slider ipTo;
+	public Button checkButton1;
+	public Button checkButton2;
+	public Button resetButton;
 	@Autowired
 	private ItemsCache itemsCache;
 	@Autowired
@@ -81,6 +86,11 @@ public class MainController implements Initializable, DisposableBean {
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+
+		checkButton1.setGraphic(new ImageView(MyUtils.getImage("rerun.png")));
+		checkButton2.setGraphic(new ImageView(MyUtils.getImage("rerun.png")));
+		resetButton.setGraphic(new ImageView(MyUtils.getImage("delete.png")));
+
 		name.textProperty().addListener((observable, oldValue, newValue) -> {
 			MarketItem item = itemsCache.getItemByName(newValue);
 			if (item != null) {
