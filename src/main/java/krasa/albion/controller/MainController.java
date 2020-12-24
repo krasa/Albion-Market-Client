@@ -23,10 +23,7 @@ import krasa.albion.service.ItemsCache;
 import krasa.albion.service.MarketItem;
 import krasa.albion.service.NetworkService;
 import krasa.albion.service.Storage;
-import krasa.albion.utils.CustomListViewSkin;
-import krasa.albion.utils.MyUtils;
-import krasa.albion.utils.ThreadDump;
-import krasa.albion.utils.ThreadDumper;
+import krasa.albion.utils.*;
 import krasa.albion.web.MarketResponse;
 import krasa.albion.web.PriceStats;
 import net.rgielen.fxweaver.core.FxmlView;
@@ -87,6 +84,8 @@ public class MainController implements Initializable, DisposableBean {
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 
+		// enable copy/paste
+		TableClipboardUtils.installCopyPasteHandler(table);
 		checkButton1.setGraphic(new ImageView(MyUtils.getImage("rerun.png")));
 		checkButton2.setGraphic(new ImageView(MyUtils.getImage("rerun.png")));
 		resetButton.setGraphic(new ImageView(MyUtils.getImage("delete.png")));
