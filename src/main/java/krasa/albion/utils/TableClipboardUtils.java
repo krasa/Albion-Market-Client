@@ -47,6 +47,7 @@ public class TableClipboardUtils {
 			TableView<?> source = (TableView<?>) keyEvent.getSource();
 			if (keyEvent.getCode() == KeyCode.DELETE) {
 				source.getItems().removeAll(source.getSelectionModel().getSelectedItems());
+				keyEvent.consume();
 			}
 
 			if (copyKeyCodeCompination.match(keyEvent)) {

@@ -12,6 +12,10 @@ public class History {
 
 	public void add(String path, MainController mainController) {
 		items.removeIf(historyItem -> historyItem.getPath().equals(path));
+		int maxSize = 50;
+		if (items.size() > maxSize) {
+			items.remove(maxSize, items.size());
+		}
 		items.add(0, new HistoryItem(path, mainController));
 	}
 

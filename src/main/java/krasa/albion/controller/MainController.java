@@ -15,9 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
 import krasa.albion.application.SpringbootJavaFxApplication;
@@ -33,6 +31,7 @@ import krasa.albion.web.MarketItem;
 import krasa.albion.web.PriceStats;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.RangeSlider;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,11 +93,25 @@ public class MainController implements Initializable, DisposableBean {
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		historyListView.setOnKeyPressed(keyEvent -> {
+			KeyCodeCombination copyKeyCodeCompination = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
 			if (keyEvent.getCode() == KeyCode.DELETE) {
 				historyListView.getItems().removeAll(historyListView.getSelectionModel().getSelectedItem());
+				keyEvent.consume();
+			}
+			if (copyKeyCodeCompination.match(keyEvent)) {
+				HistoryItem selectedItem = historyListView.getSelectionModel().getSelectedItem();
+				if (selectedItem != null) {
+					// create clipboard content
+					final ClipboardContent clipboardContent = new ClipboardContent();
+					clipboardContent.putString(selectedItem.getName());
+
+					// set clipboard content
+					Clipboard.getSystemClipboard().setContent(clipboardContent);
+				}
+				keyEvent.consume();
+
 			}
 		});
-		;
 
 
 		historyListView.setItems(history.getItems());
@@ -220,7 +233,10 @@ public class MainController implements Initializable, DisposableBean {
 			throw new RuntimeException(e);
 		}
 
-		TextFields.bindAutoCompletion(name, itemsCache.names());
+		AutoCompletionBinding<String> stringAutoCompletionBinding = TextFields.bindAutoCompletion(name, itemsCache.names());
+		stringAutoCompletionBinding.setDelay(0);
+
+
 		storage.load(this);
 	}
 
