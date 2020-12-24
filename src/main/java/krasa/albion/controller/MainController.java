@@ -443,9 +443,11 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void reset(ActionEvent actionEvent) {
 		name.setText("");
+		ipTo.setValue(ipTo.getMax());
 		cities.getSelectionModel().clearSelection();
 		tier.getSelectionModel().clearSelection();
 		quality.getSelectionModel().clearSelection();
+		table.getItems().clear();
 	}
 
 	public void reloadTable(ActionEvent actionEvent) {
