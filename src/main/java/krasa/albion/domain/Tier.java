@@ -20,6 +20,9 @@ public class Tier {
 
 	public String generateCode(MarketItem item) {
 		String code = item.getCode();
+		if (!code.matches("^T[0-9]_.*")) {
+			return code;
+		}
 		code = code.substring(2);
 
 		if (tier == -1) {

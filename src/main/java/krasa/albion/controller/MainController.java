@@ -218,7 +218,7 @@ public class MainController implements Initializable, DisposableBean {
 		tier.setItems(tiers);
 		tiers.add("---");
 		for (int i = 8; i > 0; i--) {
-			if (i > 4) {
+			if (i >= 4) {
 				tiers.add("" + i + ".3");
 				tiers.add("" + i + ".2");
 				tiers.add("" + i + ".1");

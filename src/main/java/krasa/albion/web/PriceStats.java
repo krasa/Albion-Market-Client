@@ -1,15 +1,21 @@
 package krasa.albion.web;
 
 import javafx.scene.control.ListView;
+import krasa.albion.commons.MyException;
 import krasa.albion.domain.Quality;
 import krasa.albion.domain.Tier;
 import krasa.albion.service.ItemsCache;
 import krasa.albion.service.MarketItem;
 import org.controlsfx.control.RangeSlider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class PriceStats {
+	private static final Logger log = LoggerFactory.getLogger(PriceStats.class);
+
 	private final List<String> cities;
 	private final List<String> tiers;
 	private final ItemsCache itemsCache;
@@ -34,19 +40,26 @@ public class PriceStats {
 		if (tiers.isEmpty() || tiers.contains("---")) {
 			sb.append(code);
 		} else {
+			HashSet<String> codes = new HashSet<>();
 			for (int i = 0; i < tiers.size(); i++) {
 				String tier = tiers.get(i);
 				String adjustedCode = new Tier(tier).generateCode(item);
 				if (itemsCache.containsCode(adjustedCode)) {
-					sb.append(adjustedCode);
-					sb.append(",");
+					codes.add(code);
 				} else {
-					throw new RuntimeException("invalid code=" + adjustedCode);
+					log.warn("invalid code=" + adjustedCode);
+//					throw new RuntimeException("invalid code=" + adjustedCode);
 				}
+			}
+			if (codes.size() == 0) {
+				throw new MyException("No items at this tier");
+			}
+			for (String s : codes) {
+				sb.append(s);
+				sb.append(",");
 			}
 		}
 		normalize(sb);
-
 		sb.append("?");
 		if (!cities.isEmpty() && !cities.contains("---")) {
 			sb.append("locations=");
@@ -70,7 +83,7 @@ public class PriceStats {
 	}
 
 	private void normalize(StringBuilder sb) {
-		if (sb.codePointAt(sb.length() - 1) == ',') {
+		if (sb.length() > 0 && sb.codePointAt(sb.length() - 1) == ',') {
 			sb.setLength(sb.length() - 1);
 		}
 	}
