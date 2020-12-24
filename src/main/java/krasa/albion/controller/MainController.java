@@ -111,6 +111,9 @@ public class MainController implements Initializable, DisposableBean {
 					int max = 0;
 
 					for (String item : selectedItems) {
+						if (item.equals("---")) {
+							continue;
+						}
 						int ip = new Tier(item).getIp();
 						min = Math.min(min, ip);
 						max = Math.max(max, ip);
@@ -136,6 +139,9 @@ public class MainController implements Initializable, DisposableBean {
 				MultipleSelectionModel<String> selectionModel = tier.getSelectionModel();
 				selectionModel.clearSelection();
 				for (String item : tier.getItems()) {
+					if (item.equals("---")) {
+						continue;
+					}
 					int ip = new Tier(item).getIp();
 					if (ip >= from
 							&& ip <= to) {
@@ -174,14 +180,14 @@ public class MainController implements Initializable, DisposableBean {
 			addIpColumn(50);
 			addSellPriceColumn("Sell Price", 200);
 			addDateColumn("sell_price_min_date");
-			addDateColumn("sell_price_max_date");
+//			addDateColumn("sell_price_max_date");
 //			addPriceColumn("sell_price_min", 100);
 //			addPriceColumn("sell_price_max", 100);
 //			addPriceColumn("buy_price_min", 100);
 //			addPriceColumn("buy_price_max", 100);
 			addBuyPriceColumn("Buy Price", 200);
 			addDateColumn("buy_price_min_date");
-			addDateColumn("buy_price_max_date");
+//			addDateColumn("buy_price_max_date");
 			addColumn("item_id");
 
 			table.setItems(FXCollections.observableArrayList());
@@ -229,7 +235,7 @@ public class MainController implements Initializable, DisposableBean {
 		}
 
 		TextFields.bindAutoCompletion(name, itemsCache.names());
-		storage.load(name, cities, tier, quality);
+		storage.load(name, cities, tier, quality, ipFrom, ipTo);
 	}
 
 
@@ -289,7 +295,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	@Override
 	public void destroy() throws Exception {
-		storage.save(name, cities, tier, quality);
+		storage.save(name, cities, tier, quality, ipFrom, ipTo);
 	}
 
 

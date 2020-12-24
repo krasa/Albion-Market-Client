@@ -36,6 +36,9 @@ public class Tier {
 	}
 
 	public int getIp() {
+		if (tier == -1) {
+			throw new RuntimeException("invalid tier");
+		}
 		return 700 + (tier - 4) * 100 + enchant * 100;
 	}
 }

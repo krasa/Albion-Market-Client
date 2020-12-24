@@ -1,8 +1,11 @@
 package krasa.albion.service;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Component;
 
@@ -20,15 +23,17 @@ public class Storage {
 	public static final Path STORAGE_OLD = Paths.get("settings.json.old");
 	public static final Path STORAGE_TMP = Paths.get("settings.json.tmp");
 
-	public void save(TextField name, ListView cities, ListView tier, ListView quality) {
+	public void save(TextField name, ListView<String> cities, ListView<String> tier, ListView<String> quality, Slider ipFrom, Slider ipTo) {
 		StorageData storageData = new StorageData();
 		storageData.cities.addAll(cities.getSelectionModel().getSelectedItems());
 		storageData.tier.addAll(tier.getSelectionModel().getSelectedItems());
 		storageData.quality.addAll(quality.getSelectionModel().getSelectedItems());
 		storageData.name = name.getText();
+		storageData.ipFrom = ipFrom.getValue();
+		storageData.ipTo = ipTo.getValue();
 
 		try {
-			String s = new ObjectMapper().writeValueAsString(storageData);
+			String s = getObjectMapper().writeValueAsString(storageData);
 
 
 			if (Files.exists(STORAGE)) {
@@ -50,16 +55,18 @@ public class Storage {
 	}
 
 
-	public void load(TextField name, ListView cities, ListView tier, ListView quality) {
+	public void load(TextField name, ListView<String> cities, ListView<String> tier, ListView<String> quality, Slider ipFrom, Slider ipTo) {
 		try {
 			StorageData storageData;
 			if (Files.exists(STORAGE)) {
 
 				String s1 = Files.readString(STORAGE);
-				storageData = new ObjectMapper().readValue(s1, StorageData.class);
+				storageData = getObjectMapper().readValue(s1, StorageData.class);
 			} else {
 				storageData = new StorageData();
 			}
+
+
 			for (String city : storageData.cities) {
 				cities.getSelectionModel().select(city);
 			}
@@ -70,51 +77,30 @@ public class Storage {
 				tier.getSelectionModel().select(city);
 			}
 			name.setText(storageData.name);
+			ipFrom.setValue(storageData.ipFrom);
+			ipTo.setValue(storageData.ipTo);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
+	private ObjectMapper getObjectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+		objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+		return objectMapper;
+	}
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class StorageData {
+		public double ipFrom = 1000;
+		public double ipTo = 1400;
 		private List<String> tier = new ArrayList<>();
 		private List<String> cities = new ArrayList<>();
 		private List<String> quality = new ArrayList<>();
 		private String name = "";
 
-		public List<String> getTier() {
-			return tier;
-		}
-
-		public void setTier(List<String> tier) {
-			this.tier = tier;
-		}
-
-		public List<String> getCities() {
-			return cities;
-		}
-
-		public void setCities(List<String> cities) {
-			this.cities = cities;
-		}
-
-		public List<String> getQuality() {
-			return quality;
-		}
-
-		public void setQuality(List<String> quality) {
-			this.quality = quality;
-		}
-
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
 	}
 
 }
