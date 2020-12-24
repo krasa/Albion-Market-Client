@@ -1,6 +1,7 @@
 package krasa.albion.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import krasa.albion.commons.MyException;
 import krasa.albion.domain.Quality;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -121,7 +122,7 @@ public class ItemsCache {
 			marketItems = collect;
 		}
 		if (marketItems.size() == 0) {
-			throw new RuntimeException();
+			throw new MyException("No item found for: " + text);
 		}
 		return marketItems;
 	}

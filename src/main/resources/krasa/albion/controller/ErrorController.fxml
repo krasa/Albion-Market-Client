@@ -14,8 +14,7 @@
 		<HBox alignment="CENTER">
 			<Group>
 				<children>
-					<Button fx:id="copyAndClose" onAction="#copyAndClose" text="Copy URL and skip"/>
-					<Button fx:id="openAndClose" layoutX="117.0" onAction="#openAndClose" text="Open web and skip"/>
+					<Button fx:id="copyAndClose" onAction="#copyAndClose" text="Copy to Clipboard and Close"/>
 					<Button layoutX="236.0" onAction="#close" text="OK"/>
 				</children>
 			</Group>

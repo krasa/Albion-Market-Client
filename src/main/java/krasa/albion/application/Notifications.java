@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 
 public class Notifications {
 	private static final Logger LOG = LoggerFactory.getLogger(Notifications.class);
@@ -36,7 +37,16 @@ public class Notifications {
 	}
 
 	private static void showErrorDialog(Throwable e) {
-		String text = stacktraceToString(e);
+		String text;
+		if (e.getCause() instanceof InvocationTargetException) {
+			e = e.getCause().getCause();
+		}
+//		if (e instanceof MyException) {
+//			text = e.getMessage();
+//		} else {
+		text = stacktraceToString(e);
+//		} 
+
 		Stage dialog = new Stage();
 		dialog.setTitle("Error");
 		dialog.initModality(Modality.APPLICATION_MODAL);
