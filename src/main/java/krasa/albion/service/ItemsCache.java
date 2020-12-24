@@ -1,11 +1,14 @@
 package krasa.albion.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import krasa.albion.domain.Quality;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,6 +20,8 @@ public class ItemsCache {
 	Map<String, MarketItem> itemsByCode = new HashMap<>();
 	Map<String, MarketItem> itemsByName = new HashMap<>();
 	Set<String> allCodes = new HashSet<>();
+
+	private Map<String, ItemsWrapper.Items.Item> itemPowerByCode;
 
 	public ItemsCache() throws Exception {
 		List<String> strings = IOUtils.readLines(new FileReader("ao-bin-dumps\\formatted\\items.txt"));
@@ -66,6 +71,18 @@ public class ItemsCache {
 			}
 		}
 
+
+		itemPowerByCode = new HashMap<>();
+		File file = new File("ao-bin-dumps\\items.json");
+		ObjectMapper xmlMapper = new ObjectMapper();
+		ItemsWrapper items = xmlMapper.readValue(file, ItemsWrapper.class);
+		ItemsWrapper.Items items1 = items.getItems();
+		for (ItemsWrapper.Items.Item item : items1.getEquipmentitem()) {
+			itemPowerByCode.put(item.getUniquename(), item);
+		}
+		for (ItemsWrapper.Items.Item item : items1.getWeapon()) {
+			itemPowerByCode.put(item.getUniquename(), item);
+		}
 	}
 
 	public List<MarketItem> getItems() {
@@ -119,5 +136,35 @@ public class ItemsCache {
 			marketItem = itemsByName.get(StringUtils.substringBefore(newValue, "@"));
 		}
 		return marketItem;
+	}
+
+	public String getIp(String item_id, Integer quality) {
+		String baseIp = getBaseIp(item_id);
+		if (baseIp != null) {
+			return String.valueOf(Integer.parseInt(baseIp) + Quality.codeToIp(quality));
+		}
+		return null;
+	}
+
+	private String getBaseIp(String item_id) {
+		ItemsWrapper.Items.Item item = itemPowerByCode.get(StringUtils.substringBefore(item_id, "@"));
+		if (item != null) {
+			String level = StringUtils.substringAfter(item_id, "@");
+			if (StringUtils.isNotEmpty(level)) {
+				ItemsWrapper.Items.Enchantments enchantments = item.getEnchantments();
+				if (enchantments != null) {
+					List<ItemsWrapper.Items.Enchantment> enchantment1 = enchantments.getEnchantment();
+					for (ItemsWrapper.Items.Enchantment enchantment : enchantment1) {
+						if (enchantment.getEnchantmentlevel().equals(level)) {
+							return enchantment.getItempower();
+						}
+					}
+
+				}
+			} else {
+				return item.getItempower();
+			}
+		}
+		return null;
 	}
 }

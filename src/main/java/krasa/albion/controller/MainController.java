@@ -91,7 +91,7 @@ public class MainController implements Initializable, DisposableBean {
 			addColumn("qualityName", 80);
 			addColumn("city", 150);
 
-
+			addIpColumn(50);
 			addSellPriceColumn("Sell Price", 200);
 			addDateColumn("sell_price_min_date");
 			addDateColumn("sell_price_max_date");
@@ -147,7 +147,6 @@ public class MainController implements Initializable, DisposableBean {
 		TextFields.bindAutoCompletion(name, itemsCache.names());
 		storage.load(name, cities, tier, quality);
 	}
-
 
 
 	@FXML
@@ -253,7 +252,6 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	private void addSellPriceColumn(String propertyName, int width) {
-
 		TableColumn<MarketResponse, String> column = new TableColumn<>(propertyName);
 		column.setPrefWidth(width);
 		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketResponse, String>, ObservableValue<String>>() {
@@ -263,6 +261,19 @@ public class MainController implements Initializable, DisposableBean {
 			}
 		});
 		column.setComparator(new PriceComparator());
+		table.getColumns().add(column);
+	}
+
+	private void addIpColumn(int width) {
+		TableColumn<MarketResponse, String> column = new TableColumn<>("IP");
+		column.setPrefWidth(width);
+		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketResponse, String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketResponse, String> param) {
+				MarketResponse value = param.getValue();
+				return new SimpleStringProperty(itemsCache.getIp(value.getItem_id(), value.getQuality()));
+			}
+		});
 		table.getColumns().add(column);
 	}
 
@@ -326,8 +337,7 @@ public class MainController implements Initializable, DisposableBean {
 	public void test(ActionEvent actionEvent) {
 		for (MarketItem item : itemsCache.getEligibleItems(name.getText())) {
 			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
-
-			System.err.println(path);
+			log.info(path);
 		}
 	}
 
