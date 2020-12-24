@@ -37,6 +37,7 @@ public class Storage {
 		storageData.cities.addAll(((ListView<String>) mainController.cities).getSelectionModel().getSelectedItems());
 		storageData.tier.addAll(mainController.tier.getSelectionModel().getSelectedItems());
 		storageData.quality.addAll(mainController.quality.getSelectionModel().getSelectedItems());
+		storageData.categories.addAll(mainController.categories.getSelectionModel().getSelectedItems());
 		storageData.name = mainController.name.getText();
 		storageData.ipFrom = mainController.ipFrom.getValue();
 		storageData.ipTo = mainController.ipTo.getValue();
@@ -77,14 +78,17 @@ public class Storage {
 			}
 
 
-			for (String city : storageData.cities) {
-				mainController.cities.getSelectionModel().select(city);
+			for (String s : storageData.cities) {
+				mainController.cities.getSelectionModel().select(s);
 			}
-			for (String city : storageData.quality) {
-				mainController.quality.getSelectionModel().select(city);
+			for (String s : storageData.quality) {
+				mainController.quality.getSelectionModel().select(s);
 			}
-			for (String city : storageData.tier) {
-				mainController.tier.getSelectionModel().select(city);
+			for (String s : storageData.tier) {
+				mainController.tier.getSelectionModel().select(s);
+			}
+			for (String s : storageData.categories) {
+				mainController.categories.getSelectionModel().select(s);
 			}
 			mainController.name.setText(storageData.name);
 			mainController.ipFrom.setValue(storageData.ipFrom);
@@ -106,6 +110,7 @@ public class Storage {
 		public double ipFrom = 1000;
 		public double ipTo = 1400;
 		public List<MarketItem> tableItems = new ArrayList<>();
+		public List<String> categories = new ArrayList<>();
 		private List<String> tier = new ArrayList<>();
 		private List<String> cities = new ArrayList<>();
 		private List<String> quality = new ArrayList<>();

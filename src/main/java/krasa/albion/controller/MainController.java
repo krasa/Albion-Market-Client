@@ -83,12 +83,14 @@ public class MainController implements Initializable, DisposableBean {
 	public Button reloadTable;
 	@Autowired
 	public ItemsCache itemsCache;
+	public ListView<String> categories;
 	@Autowired
 	private Storage storage;
 	@Autowired
 	private NetworkService networkService;
 	boolean changing;
 	public History history = new History();
+	private AutoCompletionBinding<String> stringAutoCompletionBinding;
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -120,6 +122,9 @@ public class MainController implements Initializable, DisposableBean {
 			public void handle(MouseEvent event) {
 				if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
 					HistoryItem storageData = historyListView.getSelectionModel().getSelectedItem();
+					if (storageData == null) {
+						return;
+					}
 					log.info(storageData.getPath());
 					cities.getSelectionModel().clearSelection();
 					for (String city : storageData.getCities()) {
@@ -184,6 +189,22 @@ public class MainController implements Initializable, DisposableBean {
 				}
 			}
 		});
+		ObservableList<String> observableList = FXCollections.observableArrayList();
+		observableList.add("---");
+		observableList.add("Weapon");
+		observableList.add("Equipment Item");
+		observableList.add("Mount");
+		observableList.add("Farmable Item");
+		observableList.add("Simple Item");
+		observableList.add("Consumable Item");
+		observableList.add("Consumable from Inventory");
+		observableList.add("Furniture Item");
+		observableList.add("Journal Item");
+		observableList.add("Labourer Contract");
+		observableList.add("Mount Skin");
+//		observableList.add("Crystal League Item");
+		categories.setItems(observableList);
+
 
 		ChangeListener<Number> sliderListener = (observable, oldValue, newValue) -> {
 			//https://wiki.albiononline.com/wiki/Item_Power
@@ -233,7 +254,20 @@ public class MainController implements Initializable, DisposableBean {
 			throw new RuntimeException(e);
 		}
 
-		AutoCompletionBinding<String> stringAutoCompletionBinding = TextFields.bindAutoCompletion(name, itemsCache.names());
+		categories.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		categories.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<String>() {
+			@Override
+			public void onChanged(Change<? extends String> c) {
+				if (stringAutoCompletionBinding != null) {
+					stringAutoCompletionBinding.dispose();
+				}
+
+				stringAutoCompletionBinding = TextFields.bindAutoCompletion(name, itemsCache.autocompleteNames(categories.getSelectionModel().getSelectedItems()));
+				stringAutoCompletionBinding.setDelay(0);
+			}
+		});
+
+		stringAutoCompletionBinding = TextFields.bindAutoCompletion(name, itemsCache.autocompleteNames(categories.getSelectionModel().getSelectedItems()));
 		stringAutoCompletionBinding.setDelay(0);
 
 

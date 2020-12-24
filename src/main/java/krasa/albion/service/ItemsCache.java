@@ -1,6 +1,10 @@
 package krasa.albion.service;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.collections.ObservableList;
 import krasa.albion.commons.MyException;
 import krasa.albion.domain.Quality;
 import org.apache.commons.io.IOUtils;
@@ -23,6 +27,7 @@ public class ItemsCache {
 	Set<String> allCodes = new HashSet<>();
 
 	private Map<String, ItemsWrapper.Items.Item> itemPowerByCode;
+	private ItemsWrapper.Items itemDetails;
 
 	public ItemsCache() throws Exception {
 		List<String> strings = IOUtils.readLines(new FileReader("ao-bin-dumps\\formatted\\items.txt"));
@@ -75,27 +80,111 @@ public class ItemsCache {
 
 		itemPowerByCode = new HashMap<>();
 		File file = new File("ao-bin-dumps\\items.json");
-		ObjectMapper xmlMapper = new ObjectMapper();
+		ObjectMapper xmlMapper = getObjectMapper();
+//		Map map = xmlMapper.readValue(file, Map.class);
 		ItemsWrapper items = xmlMapper.readValue(file, ItemsWrapper.class);
-		ItemsWrapper.Items items1 = items.getItems();
-		for (ItemsWrapper.Items.Item item : items1.getEquipmentitem()) {
-			itemPowerByCode.put(item.getUniquename(), item);
+		itemDetails = items.items;
+		for (ItemsWrapper.Items.Item item : itemDetails.equipmentitem) {
+			itemPowerByCode.put(item.uniquename, item);
 		}
-		for (ItemsWrapper.Items.Item item : items1.getWeapon()) {
-			itemPowerByCode.put(item.getUniquename(), item);
+		for (ItemsWrapper.Items.Item item : itemDetails.weapon) {
+			itemPowerByCode.put(item.uniquename, item);
 		}
 	}
 
-	public List<MarketItem> getItems() {
+	private ObjectMapper getObjectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+		objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+		objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+		return objectMapper;
+	}
+
+	public List<MarketItem> getAllItems() {
 		return items;
 	}
 
-	public Set<String> names() {
-		Set<String> objects = new TreeSet<>();
-		for (MarketItem item : getItems()) {
-			objects.add(item.getName());
+	public Set<String> autocompleteNames(ObservableList<String> selectedItems) {
+		Set<String> names = new TreeSet<>();
+		Set<String> codes = new TreeSet<>();
+		if (selectedItems.isEmpty() || selectedItems.contains("---")) {
+			add(codes, itemDetails.weapon);
+			add(codes, itemDetails.equipmentitem);
+			add(codes, itemDetails.mount);
+			add(codes, itemDetails.farmableitem);
+			add(codes, itemDetails.simpleitem);
+			add(codes, itemDetails.consumableitem);
+			add(codes, itemDetails.consumablefrominventoryitem);
+			add(codes, itemDetails.furnitureitem);
+			add(codes, itemDetails.journalitem);
+			add(codes, itemDetails.labourercontract);
+			add(codes, itemDetails.mountskin);
+			add(codes, itemDetails.crystalleagueitem);
+		} else {
+			for (String selectedItem : selectedItems) {
+				switch (selectedItem) {
+					case ("---"):
+						break;
+					case ("Weapon"):
+						add(codes, itemDetails.weapon);
+						break;
+					case ("Equipment Item"):
+						add(codes, itemDetails.equipmentitem);
+						break;
+					case ("Mount"):
+						add(codes, itemDetails.mount);
+						break;
+					case ("Farmable Item"):
+						add(codes, itemDetails.farmableitem);
+						break;
+					case ("Simple Item"):
+						add(codes, itemDetails.simpleitem);
+						break;
+					case ("Consumable Item"):
+						add(codes, itemDetails.consumableitem);
+						break;
+					case ("Consumable from Inventory"):
+						add(codes, itemDetails.consumablefrominventoryitem);
+						break;
+					case ("Furniture Item"):
+						add(codes, itemDetails.furnitureitem);
+						break;
+					case ("Journal Item"):
+						add(codes, itemDetails.journalitem);
+						break;
+					case ("Labourer Contract"):
+						add(codes, itemDetails.labourercontract);
+						break;
+					case ("Mount Skin"):
+						add(codes, itemDetails.mountskin);
+						break;
+//					case ("Crystal League Item"):
+//						add(codes, itemDetails.crystalleagueitem);
+//						break;
+					default:
+						throw new RuntimeException(selectedItem);
+				}
+			}
 		}
-		return objects;
+
+
+		for (MarketItem item : getAllItems()) {
+			String code = item.getCode();
+			if (codes.contains(code)) {
+				names.add(item.getName());
+			} else if (codes.contains(StringUtils.substringBeforeLast(code, "@"))) {
+				names.add(item.getName());
+			}
+		}
+		log.info("Autocomplete size: " + names.size());
+		return names;
+	}
+
+	private void add(Set<String> codes, List<ItemsWrapper.Items.Item> mount) {
+		for (ItemsWrapper.Items.Item item : mount) {
+			String code = item.uniquename;
+			codes.add(code);
+		}
 	}
 
 	public String getName(String item_id) {
@@ -152,18 +241,18 @@ public class ItemsCache {
 		if (item != null) {
 			String level = StringUtils.substringAfter(item_id, "@");
 			if (StringUtils.isNotEmpty(level)) {
-				ItemsWrapper.Items.Enchantments enchantments = item.getEnchantments();
+				ItemsWrapper.Items.Item.Enchantments enchantments = item.enchantments;
 				if (enchantments != null) {
-					List<ItemsWrapper.Items.Enchantment> enchantment1 = enchantments.getEnchantment();
-					for (ItemsWrapper.Items.Enchantment enchantment : enchantment1) {
-						if (enchantment.getEnchantmentlevel().equals(level)) {
-							return enchantment.getItempower();
+					List<ItemsWrapper.Items.Item.Enchantments.Enchantment> enchantment1 = enchantments.enchantment;
+					for (ItemsWrapper.Items.Item.Enchantments.Enchantment enchantment : enchantment1) {
+						if (enchantment.enchantmentlevel.equals(level)) {
+							return enchantment.itempower;
 						}
 					}
 
 				}
 			} else {
-				return item.getItempower();
+				return item.itempower;
 			}
 		}
 		return null;

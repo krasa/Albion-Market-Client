@@ -70,6 +70,13 @@
         </VBox>
     </center>
     <right>
-        <ListView fx:id="historyListView" minHeight="165.0" prefHeight="165.0" prefWidth="200.0"/>
+        <VBox>
+            <children>
+                <ListView fx:id="categories" minHeight="280.0" prefHeight="165.0" prefWidth="200.0"/>
+                <Separator/>
+                <ListView fx:id="historyListView" minHeight="165.0" prefHeight="165.0" prefWidth="200.0"
+                          VBox.vgrow="ALWAYS"/>
+            </children>
+        </VBox>
     </right>
 </BorderPane>
