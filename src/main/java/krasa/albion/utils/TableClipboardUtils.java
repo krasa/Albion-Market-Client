@@ -9,7 +9,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.input.*;
-import krasa.albion.web.MarketResponse;
+import krasa.albion.web.MarketItem;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -83,7 +83,7 @@ public class TableClipboardUtils {
 	public static void copySelectionToClipboard(TableView<?> table) {
 
 
-		MarketResponse selectedItem = (MarketResponse) table.getSelectionModel().getSelectedItem();
+		MarketItem selectedItem = (MarketItem) table.getSelectionModel().getSelectedItem();
 		if (selectedItem != null) {
 			// create clipboard content
 			final ClipboardContent clipboardContent = new ClipboardContent();

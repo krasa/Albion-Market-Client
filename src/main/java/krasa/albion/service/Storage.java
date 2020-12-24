@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import krasa.albion.controller.MainController;
+import krasa.albion.web.MarketItem;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -23,14 +23,23 @@ public class Storage {
 	public static final Path STORAGE_OLD = Paths.get("settings.json.old");
 	public static final Path STORAGE_TMP = Paths.get("settings.json.tmp");
 
-	public void save(TextField name, ListView<String> cities, ListView<String> tier, ListView<String> quality, Slider ipFrom, Slider ipTo) {
+
+	private ObjectMapper getObjectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+		objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+		return objectMapper;
+	}
+
+	public void save(MainController mainController) {
 		StorageData storageData = new StorageData();
-		storageData.cities.addAll(cities.getSelectionModel().getSelectedItems());
-		storageData.tier.addAll(tier.getSelectionModel().getSelectedItems());
-		storageData.quality.addAll(quality.getSelectionModel().getSelectedItems());
-		storageData.name = name.getText();
-		storageData.ipFrom = ipFrom.getValue();
-		storageData.ipTo = ipTo.getValue();
+		storageData.cities.addAll(((ListView<String>) mainController.cities).getSelectionModel().getSelectedItems());
+		storageData.tier.addAll(mainController.tier.getSelectionModel().getSelectedItems());
+		storageData.quality.addAll(mainController.quality.getSelectionModel().getSelectedItems());
+		storageData.name = mainController.name.getText();
+		storageData.ipFrom = mainController.ipFrom.getValue();
+		storageData.ipTo = mainController.ipTo.getValue();
+		storageData.tableItems = mainController.table.getItems();
 
 		try {
 			String s = getObjectMapper().writeValueAsString(storageData);
@@ -54,8 +63,7 @@ public class Storage {
 		}
 	}
 
-
-	public void load(TextField name, ListView<String> cities, ListView<String> tier, ListView<String> quality, Slider ipFrom, Slider ipTo) {
+	public void load(MainController mainController) {
 		try {
 			StorageData storageData;
 			if (Files.exists(STORAGE)) {
@@ -68,34 +76,34 @@ public class Storage {
 
 
 			for (String city : storageData.cities) {
-				cities.getSelectionModel().select(city);
+				((ListView<String>) mainController.cities).getSelectionModel().select(city);
 			}
 			for (String city : storageData.quality) {
-				quality.getSelectionModel().select(city);
+				mainController.quality.getSelectionModel().select(city);
 			}
 			for (String city : storageData.tier) {
-				tier.getSelectionModel().select(city);
+				mainController.tier.getSelectionModel().select(city);
 			}
-			name.setText(storageData.name);
-			ipFrom.setValue(storageData.ipFrom);
-			ipTo.setValue(storageData.ipTo);
+			mainController.name.setText(storageData.name);
+			mainController.ipFrom.setValue(storageData.ipFrom);
+			mainController.ipTo.setValue(storageData.ipTo);
+
+
+			for (MarketItem tableItem : storageData.tableItems) {
+				tableItem.init(mainController.itemsCache);
+			}
+			mainController.table.getItems().addAll(storageData.tableItems);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	private ObjectMapper getObjectMapper() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-		objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-		return objectMapper;
-	}
-
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class StorageData {
 		public double ipFrom = 1000;
 		public double ipTo = 1400;
+		public List<MarketItem> tableItems = new ArrayList<>();
 		private List<String> tier = new ArrayList<>();
 		private List<String> cities = new ArrayList<>();
 		private List<String> quality = new ArrayList<>();

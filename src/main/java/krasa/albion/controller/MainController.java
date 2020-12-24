@@ -18,13 +18,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
 import krasa.albion.application.SpringbootJavaFxApplication;
+import krasa.albion.domain.PriceComparator;
 import krasa.albion.domain.Tier;
 import krasa.albion.service.ItemsCache;
-import krasa.albion.service.MarketItem;
 import krasa.albion.service.NetworkService;
 import krasa.albion.service.Storage;
 import krasa.albion.utils.*;
-import krasa.albion.web.MarketResponse;
+import krasa.albion.web.MarketItem;
 import krasa.albion.web.PriceStats;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.RangeSlider;
@@ -43,7 +43,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 @Component
@@ -63,7 +63,7 @@ public class MainController implements Initializable, DisposableBean {
 	@FXML
 	public javafx.scene.control.ListView cities;
 	@FXML
-	public javafx.scene.control.TableView table;
+	public javafx.scene.control.TableView<MarketItem> table;
 	public ListView<String> quality;
 	public ListView<String> tier;
 	public RangeSlider ip;
@@ -73,8 +73,9 @@ public class MainController implements Initializable, DisposableBean {
 	public Button checkButton1;
 	public Button checkButton2;
 	public Button resetButton;
+	public Button reloadTable;
 	@Autowired
-	private ItemsCache itemsCache;
+	public ItemsCache itemsCache;
 	@Autowired
 	private Storage storage;
 	@Autowired
@@ -91,7 +92,7 @@ public class MainController implements Initializable, DisposableBean {
 		resetButton.setGraphic(new ImageView(MyUtils.getImage("delete.png")));
 
 		name.textProperty().addListener((observable, oldValue, newValue) -> {
-			MarketItem item = itemsCache.getItemByName(newValue);
+			krasa.albion.service.MarketItem item = itemsCache.getItemByName(newValue);
 			if (item != null) {
 				code.setText(item.getCode() + " - id " + item.getId());
 			} else {
@@ -171,88 +172,98 @@ public class MainController implements Initializable, DisposableBean {
 		ipTo.valueProperty().addListener(sliderListener);
 
 		try {
-			addColumn("name", 200);
-			addColumn("tier", 25);
-			addColumn("qualityName", 80);
-			addColumn("city", 150);
-
-			addIpColumn(50);
-			addSellPriceColumn("Sell Price", 200);
-			addDateColumn("sell_price_min_date");
-//			addDateColumn("sell_price_max_date");
-//			addPriceColumn("sell_price_min", 100);
-//			addPriceColumn("sell_price_max", 100);
-//			addPriceColumn("buy_price_min", 100);
-//			addPriceColumn("buy_price_max", 100);
-			addBuyPriceColumn("Buy Price", 200);
-			addDateColumn("buy_price_min_date");
-//			addDateColumn("buy_price_max_date");
-			addColumn("item_id");
-
-			table.setItems(FXCollections.observableArrayList());
-			cities.setItems(FXCollections.observableArrayList(
-					"---",
-					"Lymhurst",
-					"Fort Sterling",
-					"Caerleon",
-					"Martlock",
-					"Thetford",
-//					"Merlyn",
-					"Bridgewatch"));
-
-			ObservableList<String> tiers = FXCollections.observableArrayList();
-			tier.setItems(tiers);
-			tiers.add("---");
-			for (int i = 8; i > 0; i--) {
-				if (i > 4) {
-					tiers.add("" + i + ".3");
-					tiers.add("" + i + ".2");
-					tiers.add("" + i + ".1");
-					tiers.add("" + i + ".0");
-				} else {
-					tiers.add("" + i + ".0");
-				}
-			}
-			quality.setItems(FXCollections.observableArrayList(
-					"---",
-					"Normal",
-					"Good",
-					"Outstanding",
-					"Excellent",
-					"Masterpiece"
-
-			));
-
-			cities.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-			quality.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-			tier.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-			tier.setSkin(new CustomListViewSkin<>(tier));
-			quality.setSkin(new CustomListViewSkin<>(quality));
-			cities.setSkin(new CustomListViewSkin<>(cities));
+			initTable();
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 
 		TextFields.bindAutoCompletion(name, itemsCache.names());
-		storage.load(name, cities, tier, quality, ipFrom, ipTo);
+		storage.load(this);
+	}
+
+	private void initTable() {
+		table.getColumns().clear();
+		addColumn("name", "name", 200);
+		addColumn("tier", "tier", 25);
+		addColumn("Quality", "qualityName", 80);
+		addColumn("city", "city", 150);
+
+		addIpColumn(50);
+		addSellPriceColumn("Sell Price", 200);
+		addColumn("Elapsed", "sellElapsed", 80);
+//		addDateColumn("sell_price_min_date");
+//			addDateColumn("sell_price_max_date");
+//			addPriceColumn("sell_price_min", 100);
+//			addPriceColumn("sell_price_max", 100);
+//			addPriceColumn("buy_price_min", 100);
+//			addPriceColumn("buy_price_max", 100);
+		addBuyPriceColumn("Buy Price", 200);
+		addColumn("Elapsed", "buyElapsed", 80);
+//		addDateColumn("buy_price_min_date");
+//			addDateColumn("buy_price_max_date");
+		addColumn("item_id", "item_id");
+
+		table.setItems(FXCollections.observableArrayList());
+		cities.setItems(FXCollections.observableArrayList(
+				"---",
+				"Lymhurst",
+				"Fort Sterling",
+				"Caerleon",
+				"Martlock",
+				"Thetford",
+//					"Merlyn",
+				"Bridgewatch"));
+
+		ObservableList<String> tiers = FXCollections.observableArrayList();
+		tier.setItems(tiers);
+		tiers.add("---");
+		for (int i = 8; i > 0; i--) {
+			if (i > 4) {
+				tiers.add("" + i + ".3");
+				tiers.add("" + i + ".2");
+				tiers.add("" + i + ".1");
+				tiers.add("" + i + ".0");
+			} else {
+				tiers.add("" + i + ".0");
+			}
+		}
+		quality.setItems(FXCollections.observableArrayList(
+				"---",
+				"Normal",
+				"Good",
+				"Outstanding",
+				"Excellent",
+				"Masterpiece"
+
+		));
+
+		cities.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		quality.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		tier.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		tier.setSkin(new CustomListViewSkin<>(tier));
+		quality.setSkin(new CustomListViewSkin<>(quality));
+		cities.setSkin(new CustomListViewSkin<>(cities));
 	}
 
 
 	@FXML
 	public void check(ActionEvent actionEvent) {
-
 		String text = name.getText();
-		for (MarketItem item : itemsCache.getEligibleItems(text)) {
+		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(text)) {
 			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
 			log.info(path);
-			MarketResponse[] forObject = new RestTemplate().getForObject(path, MarketResponse[].class);
-			log.info(Arrays.toString(forObject));
-			for (MarketResponse response : forObject) {
-				table.getItems().add(response.init(itemsCache));
-				table.refresh();
-			}
+			cheackPrice(path);
 		}
 
+	}
+
+	private void cheackPrice(String path) {
+		MarketItem[] responses = new RestTemplate().getForObject(path, MarketItem[].class);
+		log.info(Arrays.toString(responses));
+		for (MarketItem response : responses) {
+			response.setRequestPath(path);
+			table.getItems().add(response.init(itemsCache));
+		}
 	}
 
 	@FXML
@@ -294,12 +305,12 @@ public class MainController implements Initializable, DisposableBean {
 
 	@Override
 	public void destroy() throws Exception {
-		storage.save(name, cities, tier, quality, ipFrom, ipTo);
+		storage.save(this);
 	}
 
 
-	protected void addColumn(String propertyName) {
-		addColumn(propertyName, 200);
+	protected void addColumn(String label, String propertyName) {
+		addColumn(label, propertyName, 200);
 	}
 
 	private void addDateColumn(String propertyName) {
@@ -332,8 +343,8 @@ public class MainController implements Initializable, DisposableBean {
 //		column.setStyle("-fx-alignment: CENTER-RIGHT;");
 	}
 
-	protected void addColumn(String propertyName, int width) {
-		TableColumn<MarketItem, String> column = new TableColumn(propertyName);
+	protected void addColumn(String label, String propertyName, int width) {
+		TableColumn<MarketItem, String> column = new TableColumn(label);
 		column.setPrefWidth(width);
 		column.setCellValueFactory(new PropertyValueFactory(propertyName));
 		table.getColumns().add(column);
@@ -341,11 +352,11 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	private void addSellPriceColumn(String propertyName, int width) {
-		TableColumn<MarketResponse, String> column = new TableColumn<>(propertyName);
+		TableColumn<MarketItem, String> column = new TableColumn<>(propertyName);
 		column.setPrefWidth(width);
-		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketResponse, String>, ObservableValue<String>>() {
+		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketItem, String>, ObservableValue<String>>() {
 			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketResponse, String> param) {
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketItem, String> param) {
 				return new SimpleStringProperty(format(param.getValue().getSell_price_min()) + " - " + format(param.getValue().getSell_price_max()));
 			}
 		});
@@ -354,12 +365,12 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	private void addIpColumn(int width) {
-		TableColumn<MarketResponse, String> column = new TableColumn<>("IP");
+		TableColumn<MarketItem, String> column = new TableColumn<>("IP");
 		column.setPrefWidth(width);
-		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketResponse, String>, ObservableValue<String>>() {
+		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketItem, String>, ObservableValue<String>>() {
 			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketResponse, String> param) {
-				MarketResponse value = param.getValue();
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketItem, String> param) {
+				MarketItem value = param.getValue();
 				return new SimpleStringProperty(itemsCache.getIp(value.getItem_id(), value.getQuality()));
 			}
 		});
@@ -368,11 +379,11 @@ public class MainController implements Initializable, DisposableBean {
 
 	private void addBuyPriceColumn(String propertyName, int width) {
 
-		TableColumn<MarketResponse, String> column = new TableColumn<>(propertyName);
+		TableColumn<MarketItem, String> column = new TableColumn<>(propertyName);
 		column.setPrefWidth(width);
-		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketResponse, String>, ObservableValue<String>>() {
+		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketItem, String>, ObservableValue<String>>() {
 			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketResponse, String> param) {
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketItem, String> param) {
 				return new SimpleStringProperty(format(param.getValue().getBuy_price_max()) + " - " + format(param.getValue().getBuy_price_min()));
 			}
 		});
@@ -389,10 +400,10 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	private void addPriceColumn(String propertyName, int width) {
-		TableColumn<MarketResponse, Integer> column = new TableColumn<>(propertyName);
+		TableColumn<MarketItem, Integer> column = new TableColumn<>(propertyName);
 		column.setPrefWidth(width);
 		column.setCellValueFactory(new PropertyValueFactory(propertyName));
-		column.setCellFactory(tc -> new TableCell<MarketResponse, Integer>() {
+		column.setCellFactory(tc -> new TableCell<MarketItem, Integer>() {
 			@Override
 			protected void updateItem(Integer value, boolean empty) {
 				super.updateItem(value, empty);
@@ -414,7 +425,7 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	public void web(ActionEvent actionEvent) {
-		for (MarketItem item : itemsCache.getEligibleItems(name.getText())) {
+		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
 			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
 
 			SpringbootJavaFxApplication instance = SpringbootJavaFxApplication.getInstance();
@@ -424,7 +435,7 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	public void test(ActionEvent actionEvent) {
-		for (MarketItem item : itemsCache.getEligibleItems(name.getText())) {
+		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
 			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
 			log.info(path);
 		}
@@ -437,19 +448,27 @@ public class MainController implements Initializable, DisposableBean {
 		quality.getSelectionModel().clearSelection();
 	}
 
-	private static class PriceComparator implements Comparator<String> {
-		@Override
-		public int compare(String o1, String o2) {
-			try {
-				String[] split = o1.split(" - ");
-				String[] split2 = o2.split(" - ");
-				int i = NumberFormat.getInstance().parse(split[0]).intValue();
+	public void reloadTable(ActionEvent actionEvent) {
+		ObservableList items = table.getItems();
+		initTable();
+		table.getItems().addAll(items);
+		table.refresh();
+	}
 
-				int i2 = NumberFormat.getInstance().parse(split2[0]).intValue();
-				return i - i2;
-			} catch (ParseException e) {
-				throw new RuntimeException(e);
+	public void refreshData(ActionEvent actionEvent) {
+		ObservableList<MarketItem> items = table.getItems();
+
+		HashSet<String> paths = new HashSet<>();
+		for (MarketItem item : items) {
+			paths.add(item.getRequestPath());
+		}
+		table.getItems().clear();
+
+		for (String path : paths) {
+			if (path != null) {
+				Platform.runLater(() -> cheackPrice(path));
 			}
 		}
+
 	}
 }

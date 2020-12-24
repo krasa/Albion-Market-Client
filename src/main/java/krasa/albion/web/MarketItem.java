@@ -6,8 +6,17 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.beans.Transient;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
-public class MarketResponse {
+public class MarketItem {
+	private String requestPath;
+
+
 	private String item_id;
 	private String city;
 	private Integer quality;
@@ -22,9 +31,17 @@ public class MarketResponse {
 
 	private transient ItemsCache items;
 
-	public MarketResponse init(ItemsCache items) {
+	public MarketItem init(ItemsCache items) {
 		this.items = items;
 		return this;
+	}
+
+	public String getRequestPath() {
+		return requestPath;
+	}
+
+	public void setRequestPath(String requestPath) {
+		this.requestPath = requestPath;
 	}
 
 	@Transient
@@ -48,6 +65,35 @@ public class MarketResponse {
 		return substring;
 	}
 
+	@Transient
+	public String getSellElapsed() throws ParseException {
+		String sell_price_min_date = this.sell_price_min_date;
+		if ("0001-01-01T00:00:00".equals(sell_price_min_date)) {
+			return null;
+		}
+		return elapsed(sell_price_min_date);
+	}
+
+	@Transient
+	public String getBuyElapsed() throws ParseException {
+		String buy_price_min_date = this.buy_price_min_date;
+		if ("0001-01-01T00:00:00".equals(buy_price_min_date)) {
+			return null;
+		}
+		return elapsed(buy_price_min_date);
+	}
+
+	private String elapsed(String date) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+				.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(ZoneOffset.UTC);
+		OffsetDateTime offsetDateTime = Instant.from(dateTimeFormatter.parse(date)).atOffset(ZoneOffset.UTC);
+		Duration between = Duration.between(offsetDateTime, OffsetDateTime.now(ZoneOffset.UTC));
+		if (between.toHours() > 23) {
+			return between.toHours() + "h";
+		} else {
+			return between.toHours() + "h " + between.toMinutesPart() + "min";
+		}
+	}
 
 	public String getItem_id() {
 		return item_id;
