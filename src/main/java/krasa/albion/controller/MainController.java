@@ -320,8 +320,22 @@ public class MainController implements Initializable, DisposableBean {
 		quality.setSkin(new CustomListViewSkin<>(quality));
 		cities.setSkin(new CustomListViewSkin<>(cities));
 		categories.setSkin(new CustomListViewSkin<>(categories));
-	}
+		EventHandler<MouseEvent> eventHandler = new EventHandler<>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (event.getButton().equals(MouseButton.PRIMARY)) {
+					ActionEvent button = new ActionEvent("button", null);
+					if (!event.isControlDown()) {
+						clear(button);
+					}
+					check(button);
+				}
+			}
 
+		};
+		checkButton1.setOnMouseClicked(eventHandler);
+		checkButton2.setOnMouseClicked(eventHandler);
+	}
 
 	@FXML
 	public void remoteDesktop(ActionEvent actionEvent) throws IOException {
@@ -476,12 +490,10 @@ public class MainController implements Initializable, DisposableBean {
 
 	}
 
-	@FXML
 	public void check(ActionEvent actionEvent) {
 		String text = name.getText();
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(text)) {
 			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
-
 			if (!HISTORY.equals(actionEvent.getSource())) {
 				history.add(path, this);
 				historyListView.getSelectionModel().clearSelection();

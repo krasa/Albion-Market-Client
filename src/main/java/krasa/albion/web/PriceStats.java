@@ -44,9 +44,9 @@ public class PriceStats {
 				String tier = tiers.get(i);
 				String adjustedCode = new Tier(tier).generateCode(item);
 				if (itemsCache.containsCode(adjustedCode)) {
-					codes.add(code);
+					codes.add(adjustedCode);
 				} else {
-					log.warn("invalid code=" + adjustedCode);
+					log.error("invalid code=" + adjustedCode);
 //					throw new RuntimeException("invalid code=" + adjustedCode);
 				}
 			}

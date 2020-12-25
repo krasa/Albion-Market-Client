@@ -11,10 +11,10 @@
             <children>
                 <Button fx:id="resetButton" mnemonicParsing="false" onAction="#reset" prefHeight="25.0"
                         prefWidth="15.0"/>
-                <Button fx:id="checkButton1" mnemonicParsing="false" onAction="#check" prefHeight="25.0"
+                <Button fx:id="checkButton1" mnemonicParsing="false" prefHeight="25.0"
                         prefWidth="20.0"/>
                 <TextField fx:id="name" prefHeight="25.0" prefWidth="600.0"/>
-                <Button fx:id="checkButton2" mnemonicParsing="false" onAction="#check" prefHeight="25.0"
+                <Button fx:id="checkButton2" mnemonicParsing="false" prefHeight="25.0"
                         prefWidth="20.0"
                 />
                 <Button mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="65.0" text="Clear"/>
