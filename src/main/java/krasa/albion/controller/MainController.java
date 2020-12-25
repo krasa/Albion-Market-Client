@@ -1,5 +1,6 @@
 package krasa.albion.controller;
 
+import com.sun.javafx.application.HostServicesDelegate;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -11,15 +12,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
+import krasa.albion.application.SpringbootJavaFxApplication;
 import krasa.albion.commons.CustomListViewSkin;
 import krasa.albion.domain.*;
 import krasa.albion.service.ItemsCache;
@@ -40,10 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.awt.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -81,12 +78,17 @@ public class MainController implements Initializable, DisposableBean {
 	public Button checkButton2;
 	public Button resetButton;
 	public ListView<Categories> categories;
-	transient boolean changing;
+	transient volatile boolean changing;
 	public History history = new History();
 	private AutoCompletionBinding<String> stringAutoCompletionBinding;
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+		checkButton2.disableProperty().bind(
+				name.textProperty().isEmpty());
+		checkButton1.disableProperty().bind(
+				name.textProperty().isEmpty());
+
 		historyListView.setOnKeyPressed(keyEvent -> {
 			KeyCodeCombination copyKeyCodeCompination = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
 			if (keyEvent.getCode() == KeyCode.DELETE) {
@@ -188,9 +190,8 @@ public class MainController implements Initializable, DisposableBean {
 
 
 		ChangeListener<Number> sliderListener = (observable, oldValue, newValue) -> {
-			//https://wiki.albiononline.com/wiki/Item_Power
 			if (!changing) {
-
+				changing = true;
 				double from = ipFrom.getValue();
 				double to = ipTo.getValue();
 
@@ -206,6 +207,7 @@ public class MainController implements Initializable, DisposableBean {
 						selectionModel.select(item);
 					}
 				}
+				changing = false;
 			}
 		};
 
@@ -527,6 +529,7 @@ public class MainController implements Initializable, DisposableBean {
 					for (MarketItem response : responses) {
 						response.setRequestPath(path);
 						table.getItems().add(response.init(itemsCache));
+						table.sort();
 					}
 				});
 			} finally {
@@ -542,9 +545,9 @@ public class MainController implements Initializable, DisposableBean {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
 			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
 
-			if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-				Desktop.getDesktop().browse(new URI(path.replace("/prices/", "/view/")));
-			}
+			SpringbootJavaFxApplication instance = SpringbootJavaFxApplication.getInstance();
+			HostServicesDelegate hostServices = HostServicesDelegate.getInstance(instance);
+			hostServices.showDocument(path.replace("/prices/", "/view/"));
 		}
 	}
 
