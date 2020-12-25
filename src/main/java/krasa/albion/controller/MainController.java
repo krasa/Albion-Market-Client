@@ -2,6 +2,7 @@ package krasa.albion.controller;
 
 import com.sun.javafx.application.HostServicesDelegate;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -81,13 +82,14 @@ public class MainController implements Initializable, DisposableBean {
 	transient volatile boolean changing;
 	public History history = new History();
 	private AutoCompletionBinding<String> stringAutoCompletionBinding;
+	private SimpleBooleanProperty checking = new SimpleBooleanProperty();
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		checkButton2.disableProperty().bind(
-				name.textProperty().isEmpty());
+				name.textProperty().isEmpty().or(checking));
 		checkButton1.disableProperty().bind(
-				name.textProperty().isEmpty());
+				name.textProperty().isEmpty().or(checking));
 
 		historyListView.setOnKeyPressed(keyEvent -> {
 			KeyCodeCombination copyKeyCodeCompination = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
@@ -517,9 +519,7 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	private void checkPrice(ActionEvent actionEvent, String path) {
-		checkButton1.setDisable(true);
-		checkButton2.setDisable(true);
-
+		checking.setValue(true);
 		CompletableFuture.runAsync(() -> {
 			try {
 				MarketItem[] responses = new RestTemplate().getForObject(path, MarketItem[].class);
@@ -534,8 +534,7 @@ public class MainController implements Initializable, DisposableBean {
 				});
 			} finally {
 				Platform.runLater(() -> {
-					checkButton1.setDisable(false);
-					checkButton2.setDisable(false);
+					checking.setValue(false);
 				});
 			}
 		});
