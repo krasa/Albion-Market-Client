@@ -6,7 +6,6 @@ import krasa.albion.domain.Quality;
 import krasa.albion.domain.Tier;
 import krasa.albion.service.ItemsCache;
 import krasa.albion.service.MarketItem;
-import org.controlsfx.control.RangeSlider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ public class PriceStats {
 	private final ItemsCache itemsCache;
 	private final List<String> qualities;
 
-	public PriceStats(ListView cities, ListView qualities, ListView tiers, RangeSlider ip, ItemsCache itemsCache) {
+	public PriceStats(ListView cities, ListView qualities, ListView tiers, ItemsCache itemsCache) {
 		this.cities = cities.getSelectionModel().getSelectedItems();
 		this.qualities = qualities.getSelectionModel().getSelectedItems();
 		this.tiers = tiers.getSelectionModel().getSelectedItems();

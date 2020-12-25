@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.ObservableList;
 import krasa.albion.commons.MyException;
+import krasa.albion.domain.Categories;
 import krasa.albion.domain.Quality;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -104,10 +105,11 @@ public class ItemsCache {
 		return items;
 	}
 
-	public Set<String> autocompleteNames(ObservableList<String> selectedItems) {
+	public Set<String> autocompleteNames(ObservableList<Categories> selectedItems) {
+		long start = System.currentTimeMillis();
 		Set<String> names = new TreeSet<>();
 		Set<String> codes = new TreeSet<>();
-		if (selectedItems.isEmpty() || selectedItems.contains("---")) {
+		if (selectedItems.isEmpty() || selectedItems.contains(Categories.ALL)) {
 			add(codes, itemDetails.weapon);
 			add(codes, itemDetails.equipmentitem);
 			add(codes, itemDetails.mount);
@@ -119,50 +121,46 @@ public class ItemsCache {
 			add(codes, itemDetails.journalitem);
 			add(codes, itemDetails.labourercontract);
 			add(codes, itemDetails.mountskin);
-			add(codes, itemDetails.crystalleagueitem);
 		} else {
-			for (String selectedItem : selectedItems) {
+			for (Categories selectedItem : selectedItems) {
 				switch (selectedItem) {
-					case ("---"):
+					case ALL:
 						break;
-					case ("Weapon"):
+					case WEAPON:
 						add(codes, itemDetails.weapon);
 						break;
-					case ("Equipment Item"):
+					case EQUIPMENT_ITEM:
 						add(codes, itemDetails.equipmentitem);
 						break;
-					case ("Mount"):
+					case MOUNT:
 						add(codes, itemDetails.mount);
 						break;
-					case ("Farmable Item"):
+					case FARMABLE_ITEM:
 						add(codes, itemDetails.farmableitem);
 						break;
-					case ("Simple Item"):
+					case SIMPLE_ITEM:
 						add(codes, itemDetails.simpleitem);
 						break;
-					case ("Consumable Item"):
+					case CONSUMABLE_ITEM:
 						add(codes, itemDetails.consumableitem);
 						break;
-					case ("Consumable from Inventory"):
+					case CONSUMABLE_FROM_INVENTORY:
 						add(codes, itemDetails.consumablefrominventoryitem);
 						break;
-					case ("Furniture Item"):
+					case FURNITURE_ITEM:
 						add(codes, itemDetails.furnitureitem);
 						break;
-					case ("Journal Item"):
+					case JOURNAL_ITEM:
 						add(codes, itemDetails.journalitem);
 						break;
-					case ("Labourer Contract"):
+					case LABOURER_CONTRACT:
 						add(codes, itemDetails.labourercontract);
 						break;
-					case ("Mount Skin"):
+					case MOUNT_SKIN:
 						add(codes, itemDetails.mountskin);
 						break;
-//					case ("Crystal League Item"):
-//						add(codes, itemDetails.crystalleagueitem);
-//						break;
 					default:
-						throw new RuntimeException(selectedItem);
+						throw new RuntimeException(selectedItem.toString());
 				}
 			}
 		}
@@ -176,7 +174,8 @@ public class ItemsCache {
 				names.add(item.getName());
 			}
 		}
-		log.info("Autocomplete size: " + names.size());
+		long end = System.currentTimeMillis();
+		log.info("Autocomplete size: " + names.size() + " : " + (end - start) + "ms");
 		return names;
 	}
 

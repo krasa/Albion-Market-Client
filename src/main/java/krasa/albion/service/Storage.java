@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.scene.control.ListView;
 import krasa.albion.controller.MainController;
+import krasa.albion.domain.Categories;
 import krasa.albion.domain.HistoryItem;
 import krasa.albion.web.MarketItem;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class Storage {
 
 	public void save(MainController mainController) {
 		StorageData storageData = new StorageData();
-		storageData.cities.addAll(((ListView<String>) mainController.cities).getSelectionModel().getSelectedItems());
+		storageData.cities.addAll(mainController.cities.getSelectionModel().getSelectedItems());
 		storageData.tier.addAll(mainController.tier.getSelectionModel().getSelectedItems());
 		storageData.quality.addAll(mainController.quality.getSelectionModel().getSelectedItems());
 		storageData.categories.addAll(mainController.categories.getSelectionModel().getSelectedItems());
@@ -87,7 +87,7 @@ public class Storage {
 			for (String s : storageData.tier) {
 				mainController.tier.getSelectionModel().select(s);
 			}
-			for (String s : storageData.categories) {
+			for (Categories s : storageData.categories) {
 				mainController.categories.getSelectionModel().select(s);
 			}
 			mainController.name.setText(storageData.name);
@@ -110,7 +110,7 @@ public class Storage {
 		public double ipFrom = 1000;
 		public double ipTo = 1400;
 		public List<MarketItem> tableItems = new ArrayList<>();
-		public List<String> categories = new ArrayList<>();
+		public List<Categories> categories = new ArrayList<>();
 		private List<String> tier = new ArrayList<>();
 		private List<String> cities = new ArrayList<>();
 		private List<String> quality = new ArrayList<>();

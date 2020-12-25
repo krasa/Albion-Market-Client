@@ -19,18 +19,17 @@ import javafx.scene.input.*;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
 import krasa.albion.application.SpringbootJavaFxApplication;
-import krasa.albion.domain.History;
-import krasa.albion.domain.HistoryItem;
-import krasa.albion.domain.PriceComparator;
-import krasa.albion.domain.Tier;
+import krasa.albion.commons.CustomListViewSkin;
+import krasa.albion.domain.*;
 import krasa.albion.service.ItemsCache;
-import krasa.albion.service.NetworkService;
 import krasa.albion.service.Storage;
-import krasa.albion.utils.*;
+import krasa.albion.utils.MyUtils;
+import krasa.albion.utils.TableClipboardUtils;
+import krasa.albion.utils.ThreadDump;
+import krasa.albion.utils.ThreadDumper;
 import krasa.albion.web.MarketItem;
 import krasa.albion.web.PriceStats;
 import net.rgielen.fxweaver.core.FxmlView;
-import org.controlsfx.control.RangeSlider;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import org.slf4j.Logger;
@@ -58,37 +57,27 @@ public class MainController implements Initializable, DisposableBean {
 	public static final String HISTORY = "history";
 
 
-	@FXML
+	@Autowired
+	public ItemsCache itemsCache;
+	@Autowired
+	private Storage storage;
+
+
 	public TextArea status;
-	@FXML
-	public Button checkButton;
-	@FXML
-	public Button historyButton;
-	@FXML
 	public TextField name;
-	@FXML
 	public javafx.scene.control.ListView<String> cities;
-	@FXML
 	public javafx.scene.control.TableView<MarketItem> table;
 	public ListView<String> quality;
 	public ListView<String> tier;
 	public ListView<HistoryItem> historyListView;
-	public RangeSlider ip;
 	public TextField code;
 	public Slider ipFrom;
 	public Slider ipTo;
 	public Button checkButton1;
 	public Button checkButton2;
 	public Button resetButton;
-	public Button reloadTable;
-	@Autowired
-	public ItemsCache itemsCache;
-	public ListView<String> categories;
-	@Autowired
-	private Storage storage;
-	@Autowired
-	private NetworkService networkService;
-	boolean changing;
+	public ListView<Categories> categories;
+	transient boolean changing;
 	public History history = new History();
 	private AutoCompletionBinding<String> stringAutoCompletionBinding;
 
@@ -189,20 +178,8 @@ public class MainController implements Initializable, DisposableBean {
 				}
 			}
 		});
-		ObservableList<String> observableList = FXCollections.observableArrayList();
-		observableList.add("---");
-		observableList.add("Weapon");
-		observableList.add("Equipment Item");
-		observableList.add("Mount");
-		observableList.add("Farmable Item");
-		observableList.add("Simple Item");
-		observableList.add("Consumable Item");
-		observableList.add("Consumable from Inventory");
-		observableList.add("Furniture Item");
-		observableList.add("Journal Item");
-		observableList.add("Labourer Contract");
-		observableList.add("Mount Skin");
-//		observableList.add("Crystal League Item");
+		ObservableList<Categories> observableList = FXCollections.observableArrayList();
+		observableList.addAll(Arrays.asList(Categories.values()));
 		categories.setItems(observableList);
 
 
@@ -254,10 +231,9 @@ public class MainController implements Initializable, DisposableBean {
 			throw new RuntimeException(e);
 		}
 
-		categories.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		categories.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<String>() {
+		categories.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Categories>() {
 			@Override
-			public void onChanged(Change<? extends String> c) {
+			public void onChanged(Change<? extends Categories> c) {
 				if (stringAutoCompletionBinding != null) {
 					stringAutoCompletionBinding.dispose();
 				}
@@ -339,9 +315,11 @@ public class MainController implements Initializable, DisposableBean {
 		cities.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		quality.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		tier.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		categories.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		tier.setSkin(new CustomListViewSkin<>(tier));
 		quality.setSkin(new CustomListViewSkin<>(quality));
 		cities.setSkin(new CustomListViewSkin<>(cities));
+		categories.setSkin(new CustomListViewSkin<>(categories));
 	}
 
 
@@ -502,7 +480,7 @@ public class MainController implements Initializable, DisposableBean {
 	public void check(ActionEvent actionEvent) {
 		String text = name.getText();
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(text)) {
-			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
+			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
 
 			if (!HISTORY.equals(actionEvent.getSource())) {
 				history.add(path, this);
@@ -541,7 +519,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void web(ActionEvent actionEvent) {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
+			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
 
 			SpringbootJavaFxApplication instance = SpringbootJavaFxApplication.getInstance();
 			HostServicesDelegate hostServices = HostServicesDelegate.getInstance(instance);
@@ -551,7 +529,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void test(ActionEvent actionEvent) throws InterruptedException {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new PriceStats(cities, quality, tier, ip, itemsCache).path(item);
+			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
 			history.add(path, this);
 			log.info(path);
 		}

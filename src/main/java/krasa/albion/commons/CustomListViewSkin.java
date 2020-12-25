@@ -1,4 +1,4 @@
-package krasa.albion.utils;
+package krasa.albion.commons;
 
 
 import javafx.animation.AnimationTimer;

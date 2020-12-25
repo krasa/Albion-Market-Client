@@ -14,9 +14,9 @@ public class ItemsWrapper {
 		public List<Item> equipmentitem;
 		public List<Item> weapon;
 
-		public Item shopcategories;
-		public Item hideoutitem;
-		public List<Item> farmableitem;
+//		public Item shopcategories;
+//		public Item hideoutitem;
+public List<Item> farmableitem;
 		public List<Item> simpleitem;
 		public List<Item> consumableitem;
 		public List<Item> consumablefrominventoryitem;
@@ -25,7 +25,7 @@ public class ItemsWrapper {
 		public List<Item> journalitem;
 		public List<Item> labourercontract;
 		public List<Item> mountskin;
-		public List<Item> crystalleagueitem;
+//		public List<Item> crystalleagueitem;
 
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public static class Item {
