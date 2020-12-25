@@ -7,13 +7,14 @@ import javafx.scene.paint.Paint;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public enum City {
 
-	ALL("---", paint("FFFFFF")),
+	ALL("---", null),
 	LYMHURST("Lymhurst", paint("5B9C10")),
 	FORT_STERLING("Fort Sterling", paint("FBFDFF")),
 	CAERLEON("Caerleon", paint("A02C1E")),
 	MARTLOCK("Martlock", paint("068FA3")),
 	THETFORD("Thetford", paint("9C19CD")),
-	BRIDGEWATCH("Bridgewatch", paint("EB9026"));
+	BRIDGEWATCH("Bridgewatch", paint("EB9026")),
+	BLACK_MARKET("Black Market", null);
 
 	//					"Merlyn",
 	String name;

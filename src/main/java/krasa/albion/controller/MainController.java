@@ -18,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
@@ -454,16 +455,20 @@ public class MainController implements Initializable, DisposableBean {
 					protected void updateItem(MarketItem item, boolean empty) {
 						super.updateItem(item, empty);
 
-						if (item == null || empty) {
-							setText(null);
-							setGraphic(null);
-						} else {
+						setText(null);
+						setGraphic(null);
+
+						if (item != null && !empty) {
 							setText(item.getCity());
 							City city = City.from(item.getCity());
 							if (city != null) {
-								Rectangle colorRect = new Rectangle(12, 12);
-								colorRect.setFill(city.getColor());
-								setGraphic(colorRect);
+								Paint color = city.getColor();
+								if (color != null) {
+									Rectangle colorRect = new Rectangle(12, 12);
+									colorRect.setFill(color);
+									setGraphic(colorRect);
+								}
+
 							}
 						}
 					}
