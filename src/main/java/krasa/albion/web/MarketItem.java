@@ -66,24 +66,24 @@ public class MarketItem {
 	}
 
 	@Transient
-	public String getSellElapsed() throws ParseException {
+	public String getSellAge() throws ParseException {
 		String sell_price_min_date = this.sell_price_min_date;
 		if ("0001-01-01T00:00:00".equals(sell_price_min_date)) {
 			return null;
 		}
-		return elapsed(sell_price_min_date);
+		return age(sell_price_min_date);
 	}
 
 	@Transient
-	public String getBuyElapsed() throws ParseException {
+	public String getBuyAge() throws ParseException {
 		String buy_price_min_date = this.buy_price_min_date;
 		if ("0001-01-01T00:00:00".equals(buy_price_min_date)) {
 			return null;
 		}
-		return elapsed(buy_price_min_date);
+		return age(buy_price_min_date);
 	}
 
-	private String elapsed(String date) {
+	private String age(String date) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter
 				.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(ZoneOffset.UTC);
 		OffsetDateTime offsetDateTime = Instant.from(dateTimeFormatter.parse(date)).atOffset(ZoneOffset.UTC);

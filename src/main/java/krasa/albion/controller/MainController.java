@@ -3,6 +3,7 @@ package krasa.albion.controller;
 import com.sun.javafx.application.HostServicesDelegate;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
 import krasa.albion.application.SpringbootJavaFxApplication;
@@ -59,15 +61,13 @@ public class MainController implements Initializable, DisposableBean {
 	public static final String HISTORY = "history";
 
 
-	@Autowired
-	public ItemsCache itemsCache;
-	@Autowired
-	private Storage storage;
+	public Button test;
+	public Button reloadTable;
 
 
 	public TextArea status;
 	public TextField name;
-	public javafx.scene.control.ListView<String> cities;
+	public javafx.scene.control.ListView<City> cities;
 	public javafx.scene.control.TableView<MarketItem> table;
 	public ListView<String> quality;
 	public ListView<String> tier;
@@ -84,8 +84,23 @@ public class MainController implements Initializable, DisposableBean {
 	private AutoCompletionBinding<String> stringAutoCompletionBinding;
 	private SimpleBooleanProperty checking = new SimpleBooleanProperty();
 
+	@Autowired
+	private Storage storage;
+	@Autowired
+	public ItemsCache itemsCache;
+
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+//		boolean expertMode = false;
+//		if (expertMode) {
+//		test.setVisible(true);
+//		test.setMaxWidth(0);
+//		reloadTable.setVisible(true);
+//		reloadTable.setMaxWidth(0);
+
+//		}
+
+
 		checkButton2.disableProperty().bind(
 				name.textProperty().isEmpty().or(checking));
 		checkButton1.disableProperty().bind(
@@ -124,7 +139,7 @@ public class MainController implements Initializable, DisposableBean {
 					}
 					log.info(storageData.getPath());
 					cities.getSelectionModel().clearSelection();
-					for (String city : storageData.getCities()) {
+					for (City city : storageData.getCities()) {
 						cities.getSelectionModel().select(city);
 					}
 					quality.getSelectionModel().clearSelection();
@@ -266,14 +281,14 @@ public class MainController implements Initializable, DisposableBean {
 		);
 
 		table.getColumns().clear();
-		addColumn("name", "name", 200);
-		addColumn("tier", "tier", 25);
+		addColumn("Name", "name", 200);
+		addColumn("Tier", "tier", 30);
 		addColumn("Quality", "qualityName", 80);
-		addColumn("city", "city", 150);
+		addCityColumn("City", "city", 150);
 
 		addIpColumn(50);
 		addSellPriceColumn("Sell Price", 200);
-		addColumn("Elapsed", "sellElapsed", 80);
+		addColumn("Age", "sellAge", 80);
 //		addDateColumn("sell_price_min_date");
 //			addDateColumn("sell_price_max_date");
 //			addPriceColumn("sell_price_min", 100);
@@ -281,21 +296,14 @@ public class MainController implements Initializable, DisposableBean {
 //			addPriceColumn("buy_price_min", 100);
 //			addPriceColumn("buy_price_max", 100);
 		addBuyPriceColumn("Buy Price", 200);
-		addColumn("Elapsed", "buyElapsed", 80);
+		addColumn("Age", "buyAge", 80);
 //		addDateColumn("buy_price_min_date");
 //			addDateColumn("buy_price_max_date");
 		addColumn("item_id", "item_id");
 
 		table.setItems(FXCollections.observableArrayList());
-		cities.setItems(FXCollections.observableArrayList(
-				"---",
-				"Lymhurst",
-				"Fort Sterling",
-				"Caerleon",
-				"Martlock",
-				"Thetford",
-//					"Merlyn",
-				"Bridgewatch"));
+
+		cities.setItems(FXCollections.observableArrayList(City.values()));
 
 		ObservableList<String> tiers = FXCollections.observableArrayList();
 		tier.setItems(tiers);
@@ -431,6 +439,46 @@ public class MainController implements Initializable, DisposableBean {
 		TableColumn<MarketItem, String> column = new TableColumn(label);
 		column.setPrefWidth(width);
 		column.setCellValueFactory(new PropertyValueFactory(propertyName));
+		table.getColumns().add(column);
+//		column.setStyle("-fx-alignment: CENTER-RIGHT;");
+	}
+
+	protected void addCityColumn(String label, String propertyName, int width) {
+		TableColumn<MarketItem, MarketItem> column = new TableColumn(label);
+		column.setPrefWidth(width);
+		column.setCellFactory(new Callback<TableColumn<MarketItem, MarketItem>, TableCell<MarketItem, MarketItem>>() {
+			@Override
+			public TableCell<MarketItem, MarketItem> call(TableColumn<MarketItem, MarketItem> param) {
+				return new TableCell<MarketItem, MarketItem>() {
+					@Override
+					protected void updateItem(MarketItem item, boolean empty) {
+						super.updateItem(item, empty);
+
+						if (item == null || empty) {
+							setText(null);
+							setGraphic(null);
+						} else {
+							setText(item.getCity());
+							City city = City.from(item.getCity());
+							if (city != null) {
+								Rectangle colorRect = new Rectangle(12, 12);
+								colorRect.setFill(city.getColor());
+								setGraphic(colorRect);
+							}
+						}
+					}
+				};
+
+
+			}
+		});
+		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketItem, MarketItem>, ObservableValue<MarketItem>>() {
+			@Override
+			public ObservableValue<MarketItem> call(TableColumn.CellDataFeatures<MarketItem, MarketItem> param) {
+				MarketItem value = param.getValue();
+				return new SimpleObjectProperty<>(value);
+			}
+		});
 		table.getColumns().add(column);
 //		column.setStyle("-fx-alignment: CENTER-RIGHT;");
 	}
@@ -595,4 +643,11 @@ public class MainController implements Initializable, DisposableBean {
 		}
 
 	}
+
+	public void openAlbionOnline(ActionEvent actionEvent) {
+		SpringbootJavaFxApplication instance = SpringbootJavaFxApplication.getInstance();
+		HostServicesDelegate hostServices = HostServicesDelegate.getInstance(instance);
+		hostServices.showDocument("https://www.albion-online-data.com/");
+	}
+
 }

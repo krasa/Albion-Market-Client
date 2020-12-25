@@ -2,6 +2,7 @@ package krasa.albion.web;
 
 import javafx.scene.control.ListView;
 import krasa.albion.commons.MyException;
+import krasa.albion.domain.City;
 import krasa.albion.domain.Quality;
 import krasa.albion.domain.Tier;
 import krasa.albion.service.ItemsCache;
@@ -15,12 +16,12 @@ import java.util.List;
 public class PriceStats {
 	private static final Logger log = LoggerFactory.getLogger(PriceStats.class);
 
-	private final List<String> cities;
+	private final List<City> cities;
 	private final List<String> tiers;
 	private final ItemsCache itemsCache;
 	private final List<String> qualities;
 
-	public PriceStats(ListView cities, ListView qualities, ListView tiers, ItemsCache itemsCache) {
+	public PriceStats(ListView<City> cities, ListView qualities, ListView tiers, ItemsCache itemsCache) {
 		this.cities = cities.getSelectionModel().getSelectedItems();
 		this.qualities = qualities.getSelectionModel().getSelectedItems();
 		this.tiers = tiers.getSelectionModel().getSelectedItems();
@@ -60,9 +61,9 @@ public class PriceStats {
 		}
 		normalize(sb);
 		sb.append("?");
-		if (!cities.isEmpty() && !cities.contains("---")) {
+		if (!cities.isEmpty() && !cities.contains(City.ALL)) {
 			sb.append("locations=");
-			for (String city : cities) {
+			for (City city : cities) {
 				sb.append(city);
 				sb.append(",");
 			}

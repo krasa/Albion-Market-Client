@@ -20,9 +20,11 @@
                 <Button mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="65.0" text="Clear"/>
                 <Button onAction="#refreshData" text="Refresh"/>
                 <Button mnemonicParsing="false" onAction="#web" prefHeight="25.0" prefWidth="65.0" text="Web"/>
-                <Button mnemonicParsing="false" onAction="#test" prefHeight="25.0" prefWidth="65.0" text="Test"/>
                 <TextField fx:id="code" prefHeight="25.0" prefWidth="300.0"/>
-                <Button onAction="#reloadTable" text="Reload Table"/>
+                <Hyperlink onAction="#openAlbionOnline" text="Uses: albion-online-data.com"/>
+                <Button fx:id="test" mnemonicParsing="false" onAction="#test" prefHeight="25.0" prefWidth="65.0"
+                        text="Test"/>
+                <Button fx:id="reloadTable" onAction="#reloadTable" text="Reload Table"/>
             </children>
             <padding>
                 <Insets left="10.0" top="10.0"/>

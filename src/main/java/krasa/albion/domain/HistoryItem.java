@@ -1,6 +1,5 @@
 package krasa.albion.domain;
 
-import javafx.scene.control.ListView;
 import krasa.albion.controller.MainController;
 
 import java.util.ArrayList;
@@ -9,7 +8,7 @@ import java.util.List;
 public class HistoryItem {
 
 	private List<String> tier = new ArrayList<>();
-	private List<String> cities = new ArrayList<>();
+	private List<City> cities = new ArrayList<>();
 	private List<String> quality = new ArrayList<>();
 	private String name = "";
 	private String path = "";
@@ -20,7 +19,7 @@ public class HistoryItem {
 
 	public HistoryItem(String path, MainController mainController) {
 		this.path = path;
-		cities.addAll(((ListView<String>) mainController.cities).getSelectionModel().getSelectedItems());
+		cities.addAll(mainController.cities.getSelectionModel().getSelectedItems());
 		tier.addAll(mainController.tier.getSelectionModel().getSelectedItems());
 		quality.addAll(mainController.quality.getSelectionModel().getSelectedItems());
 		name = mainController.name.getText();
@@ -59,11 +58,11 @@ public class HistoryItem {
 		this.tier = tier;
 	}
 
-	public List<String> getCities() {
+	public List<City> getCities() {
 		return cities;
 	}
 
-	public void setCities(List<String> cities) {
+	public void setCities(List<City> cities) {
 		this.cities = cities;
 	}
 

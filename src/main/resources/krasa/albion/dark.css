@@ -54,3 +54,16 @@
 .scroll-bar > .decrement-button:pressed > .decrement-arrow {
     -fx-background-color: -fx-mark-highlight-color, rgb(255, 255, 255);
 }
+
+.hyperlink:hover {
+    -fx-underline: true;
+    -fx-text-fill: cyan;
+}
+
+.hyperlink {
+    -fx-text-fill: cyan;
+}
+
+.hyperlink:visited {
+    -fx-text-fill: cyan;
+}
