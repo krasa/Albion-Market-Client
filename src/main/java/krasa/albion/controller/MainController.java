@@ -1,6 +1,5 @@
 package krasa.albion.controller;
 
-import com.sun.javafx.application.HostServicesDelegate;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -12,13 +11,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
-import krasa.albion.application.SpringbootJavaFxApplication;
 import krasa.albion.commons.CustomListViewSkin;
 import krasa.albion.domain.*;
 import krasa.albion.service.ItemsCache;
@@ -39,8 +40,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.awt.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -376,7 +380,12 @@ public class MainController implements Initializable, DisposableBean {
 
 	@Override
 	public void destroy() throws Exception {
-		storage.save(this);
+		try {
+			storage.save(this);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new RuntimeException(e);
+		}
 	}
 
 
@@ -529,13 +538,13 @@ public class MainController implements Initializable, DisposableBean {
 		});
 	}
 
-	public void web(ActionEvent actionEvent) {
+	public void web(ActionEvent actionEvent) throws URISyntaxException, IOException {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
 			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
 
-			SpringbootJavaFxApplication instance = SpringbootJavaFxApplication.getInstance();
-			HostServicesDelegate hostServices = HostServicesDelegate.getInstance(instance);
-			hostServices.showDocument(path.replace("/prices/", "/view/"));
+			if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+				Desktop.getDesktop().browse(new URI(path.replace("/prices/", "/view/")));
+			}
 		}
 	}
 

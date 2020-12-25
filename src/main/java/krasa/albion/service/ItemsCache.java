@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.ObservableList;
+import krasa.albion.Launcher;
 import krasa.albion.commons.MyException;
 import krasa.albion.domain.Categories;
 import krasa.albion.domain.Quality;
@@ -14,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ public class ItemsCache {
 	private ItemsWrapper.Items itemDetails;
 
 	public ItemsCache() throws Exception {
-		List<String> strings = IOUtils.readLines(new FileReader("ao-bin-dumps\\formatted\\items.txt"));
+		List<String> strings = IOUtils.readLines(Launcher.class.getResourceAsStream("/ao-bin-dumps/formatted/items.txt"), "UTF-8");
 		for (String string : strings) {
 			String[] split = string.split(":");
 			if (split.length == 3) {
@@ -80,10 +79,9 @@ public class ItemsCache {
 
 
 		itemPowerByCode = new HashMap<>();
-		File file = new File("ao-bin-dumps\\items.json");
 		ObjectMapper xmlMapper = getObjectMapper();
 //		Map map = xmlMapper.readValue(file, Map.class);
-		ItemsWrapper items = xmlMapper.readValue(file, ItemsWrapper.class);
+		ItemsWrapper items = xmlMapper.readValue(Launcher.class.getResourceAsStream("/ao-bin-dumps/items.json"), ItemsWrapper.class);
 		itemDetails = items.items;
 		for (ItemsWrapper.Items.Item item : itemDetails.equipmentitem) {
 			itemPowerByCode.put(item.uniquename, item);

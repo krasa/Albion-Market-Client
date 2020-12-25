@@ -20,10 +20,14 @@ import java.util.List;
 
 @Component
 public class Storage {
-	public static final Path STORAGE = Paths.get("settings.json");
-	public static final Path STORAGE_OLD = Paths.get("settings.json.old");
-	public static final Path STORAGE_TMP = Paths.get("settings.json.tmp");
+	final Path STORAGE = path("settings.json");
+	final Path STORAGE_OLD = path("settings.json.old");
+	final Path STORAGE_TMP = path("settings.json.tmp");
 
+	private Path path(String s) {
+		Path storage = Paths.get(s);
+		return Paths.get(storage.toAbsolutePath().toString().replace("\\", "/").replace("/Local/", "/Roaming/"));
+	}
 
 	private ObjectMapper getObjectMapper() {
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -47,12 +51,13 @@ public class Storage {
 		try {
 			String s = getObjectMapper().writeValueAsString(storageData);
 
-
 			if (Files.exists(STORAGE)) {
 				if (s.equals(Files.readString(STORAGE))) {
 					return;
 				}
 			}
+
+			Files.createDirectories(STORAGE.getParent());
 
 			Files.deleteIfExists(STORAGE_TMP);
 			Files.writeString(STORAGE_TMP, s.toString());
@@ -78,23 +83,27 @@ public class Storage {
 			}
 
 
-			for (String s : storageData.cities) {
-				mainController.cities.getSelectionModel().select(s);
-			}
-			for (String s : storageData.quality) {
-				mainController.quality.getSelectionModel().select(s);
-			}
-			for (String s : storageData.tier) {
-				mainController.tier.getSelectionModel().select(s);
-			}
-			for (Categories s : storageData.categories) {
-				mainController.categories.getSelectionModel().select(s);
-			}
+			mainController.history.adAll(storageData.history);
 			mainController.name.setText(storageData.name);
 			mainController.ipFrom.setValue(storageData.ipFrom);
 			mainController.ipTo.setValue(storageData.ipTo);
-			mainController.history.adAll(storageData.history);
 
+			mainController.cities.getSelectionModel().clearSelection();
+			for (String s : storageData.cities) {
+				mainController.cities.getSelectionModel().select(s);
+			}
+			mainController.quality.getSelectionModel().clearSelection();
+			for (String s : storageData.quality) {
+				mainController.quality.getSelectionModel().select(s);
+			}
+			mainController.tier.getSelectionModel().clearSelection();
+			for (String s : storageData.tier) {
+				mainController.tier.getSelectionModel().select(s);
+			}
+			mainController.categories.getSelectionModel().clearSelection();
+			for (Categories s : storageData.categories) {
+				mainController.categories.getSelectionModel().select(s);
+			}
 			for (MarketItem tableItem : storageData.tableItems) {
 				tableItem.init(mainController.itemsCache);
 			}

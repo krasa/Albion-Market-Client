@@ -3,7 +3,7 @@ package krasa.albion.application;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import krasa.albion.AlbionMarketClientApplication;
+import krasa.albion.Launcher;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -37,7 +37,7 @@ public class SpringbootJavaFxApplication extends Application {
 					context.registerBean(Parameters.class, this::getParameters); // for demonstration, not really needed
 				};
 		this.context = new SpringApplicationBuilder()
-				.sources(AlbionMarketClientApplication.class)
+				.sources(Launcher.class)
 				.initializers(initializer)
 				.run(getParameters().getRaw().toArray(new String[0]));
 	}

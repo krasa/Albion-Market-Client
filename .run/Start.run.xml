@@ -7,7 +7,7 @@
                 <option name="ENABLED" value="true"/>
             </pattern>
         </extension>
-        <option name="SPRING_BOOT_MAIN_CLASS" value="krasa.albion.AlbionMarketClientApplication"/>
+        <option name="SPRING_BOOT_MAIN_CLASS" value="krasa.albion.Launcher"/>
         <option name="ALTERNATIVE_JRE_PATH"/>
         <method v="2">
             <option name="Make" enabled="true"/>

@@ -2,7 +2,10 @@ ao-bin-dumps/
 
 settings.json
 settings.json.old
-
+           
+/logs/
+.gradle
+build/
 HELP.md
 logs/
 target/
