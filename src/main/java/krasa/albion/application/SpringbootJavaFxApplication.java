@@ -1,7 +1,6 @@
 package krasa.albion.application;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import krasa.albion.Launcher;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -50,7 +49,6 @@ public class SpringbootJavaFxApplication extends Application {
 	@Override
 	public void stop() throws Exception {
 		this.context.close();
-		Platform.exit();
 	}
 
 	public SpringbootJavaFxApplication() {

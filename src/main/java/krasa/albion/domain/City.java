@@ -10,7 +10,7 @@ public enum City {
 	ALL("---", null),
 	LYMHURST("Lymhurst", paint("5B9C10")),
 	FORT_STERLING("Fort Sterling", paint("FBFDFF")),
-	CAERLEON("Caerleon", paint("A02C1E")),
+	CAERLEON("Caerleon", paint("F00026")),
 	MARTLOCK("Martlock", paint("068FA3")),
 	THETFORD("Thetford", paint("9C19CD")),
 	BRIDGEWATCH("Bridgewatch", paint("EB9026")),

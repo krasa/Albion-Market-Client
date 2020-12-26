@@ -193,6 +193,7 @@ public class ItemsCache {
 	}
 
 	public List<MarketItem> getEligibleItems(String text) {
+		text = text.trim();
 		ArrayList<MarketItem> marketItems = new ArrayList<>();
 		for (MarketItem item : items) {
 			String name = item.getName();
@@ -218,6 +219,7 @@ public class ItemsCache {
 	}
 
 	public MarketItem getItemByName(String newValue) {
+		newValue = newValue.trim();
 		MarketItem marketItem = itemsByName.get(newValue);
 		if (marketItem == null) {
 			marketItem = itemsByName.get(StringUtils.substringBefore(newValue, "@"));

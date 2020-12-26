@@ -6,7 +6,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -89,6 +88,8 @@ public class MainController implements Initializable, DisposableBean {
 	private Storage storage;
 	@Autowired
 	public ItemsCache itemsCache;
+	private TableColumn<MarketItem, String> ipColumn;
+	private boolean initialized;
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -272,6 +273,9 @@ public class MainController implements Initializable, DisposableBean {
 
 
 		storage.load(this);
+		table.sort();
+
+		initialized = true;
 	}
 
 	private void initTable() {
@@ -285,9 +289,9 @@ public class MainController implements Initializable, DisposableBean {
 		addColumn("Name", "name", 200);
 		addColumn("Tier", "tier", 30);
 		addColumn("Quality", "qualityName", 80);
-		addCityColumn("City", "city", 150);
+		addCityColumn("City", 150);
 
-		addIpColumn(50);
+		ipColumn = addIpColumn(50);
 		addSellPriceColumn("Sell Price", 200);
 		addColumn("Age", "sellAge", 80);
 //		addDateColumn("sell_price_min_date");
@@ -303,6 +307,8 @@ public class MainController implements Initializable, DisposableBean {
 		addColumn("item_id", "item_id");
 
 		table.setItems(FXCollections.observableArrayList());
+// programmatically set a sort column:
+		table.getSortOrder().add(ipColumn);
 
 		cities.setItems(FXCollections.observableArrayList(City.values()));
 
@@ -393,11 +399,13 @@ public class MainController implements Initializable, DisposableBean {
 
 	@Override
 	public void destroy() throws Exception {
-		try {
-			storage.save(this);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-			throw new RuntimeException(e);
+		if (initialized) {
+			try {
+				storage.save(this);
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+				throw new RuntimeException(e);
+			}
 		}
 	}
 
@@ -444,13 +452,13 @@ public class MainController implements Initializable, DisposableBean {
 //		column.setStyle("-fx-alignment: CENTER-RIGHT;");
 	}
 
-	protected void addCityColumn(String label, String propertyName, int width) {
+	protected void addCityColumn(String label, int width) {
 		TableColumn<MarketItem, MarketItem> column = new TableColumn(label);
 		column.setPrefWidth(width);
-		column.setCellFactory(new Callback<TableColumn<MarketItem, MarketItem>, TableCell<MarketItem, MarketItem>>() {
+		column.setCellFactory(new Callback<>() {
 			@Override
 			public TableCell<MarketItem, MarketItem> call(TableColumn<MarketItem, MarketItem> param) {
-				return new TableCell<MarketItem, MarketItem>() {
+				return new TableCell<>() {
 					@Override
 					protected void updateItem(MarketItem item, boolean empty) {
 						super.updateItem(item, empty);
@@ -477,12 +485,9 @@ public class MainController implements Initializable, DisposableBean {
 
 			}
 		});
-		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketItem, MarketItem>, ObservableValue<MarketItem>>() {
-			@Override
-			public ObservableValue<MarketItem> call(TableColumn.CellDataFeatures<MarketItem, MarketItem> param) {
-				MarketItem value = param.getValue();
-				return new SimpleObjectProperty<>(value);
-			}
+		column.setCellValueFactory(param -> {
+			MarketItem value = param.getValue();
+			return new SimpleObjectProperty<>(value);
 		});
 		table.getColumns().add(column);
 //		column.setStyle("-fx-alignment: CENTER-RIGHT;");
@@ -491,39 +496,28 @@ public class MainController implements Initializable, DisposableBean {
 	private void addSellPriceColumn(String propertyName, int width) {
 		TableColumn<MarketItem, String> column = new TableColumn<>(propertyName);
 		column.setPrefWidth(width);
-		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketItem, String>, ObservableValue<String>>() {
-			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketItem, String> param) {
-				return new SimpleStringProperty(format(param.getValue().getSell_price_min()) + " - " + format(param.getValue().getSell_price_max()));
-			}
-		});
+		column.setCellValueFactory(param -> new SimpleStringProperty(format(param.getValue().getSell_price_min()) + " - " + format(param.getValue().getSell_price_max())));
 		column.setComparator(new PriceComparator());
 		table.getColumns().add(column);
 	}
 
-	private void addIpColumn(int width) {
+	private TableColumn<MarketItem, String> addIpColumn(int width) {
 		TableColumn<MarketItem, String> column = new TableColumn<>("IP");
 		column.setPrefWidth(width);
-		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketItem, String>, ObservableValue<String>>() {
-			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketItem, String> param) {
-				MarketItem value = param.getValue();
-				return new SimpleStringProperty(itemsCache.getIp(value.getItem_id(), value.getQuality()));
-			}
+		column.setCellValueFactory(param -> {
+			MarketItem value = param.getValue();
+			return new SimpleStringProperty(itemsCache.getIp(value.getItem_id(), value.getQuality()));
 		});
+		column.setComparator(column.getComparator().reversed());
 		table.getColumns().add(column);
+		return column;
 	}
 
 	private void addBuyPriceColumn(String propertyName, int width) {
 
 		TableColumn<MarketItem, String> column = new TableColumn<>(propertyName);
 		column.setPrefWidth(width);
-		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MarketItem, String>, ObservableValue<String>>() {
-			@Override
-			public ObservableValue<String> call(TableColumn.CellDataFeatures<MarketItem, String> param) {
-				return new SimpleStringProperty(format(param.getValue().getBuy_price_max()) + " - " + format(param.getValue().getBuy_price_min()));
-			}
-		});
+		column.setCellValueFactory(param -> new SimpleStringProperty(format(param.getValue().getBuy_price_max()) + " - " + format(param.getValue().getBuy_price_min())));
 		column.setComparator(new PriceComparator());
 		table.getColumns().add(column);
 	}
@@ -557,8 +551,7 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	public void check(ActionEvent actionEvent) {
-		String text = name.getText();
-		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(text)) {
+		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
 			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
 			if (!HISTORY.equals(actionEvent.getSource())) {
 				history.add(path, this);
