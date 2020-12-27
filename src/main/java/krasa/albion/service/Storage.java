@@ -9,8 +9,10 @@ import krasa.albion.domain.Categories;
 import krasa.albion.domain.City;
 import krasa.albion.domain.HistoryItem;
 import krasa.albion.web.MarketItem;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,8 +28,15 @@ public class Storage {
 	final Path STORAGE_TMP = path("settings.json.tmp");
 
 	private Path path(String s) {
-		Path storage = Paths.get(s);
-		return Paths.get(storage.toAbsolutePath().toString().replace("\\", "/").replace("/Local/", "/Roaming/"));
+		String appdata = System.getenv("APPDATA");
+		if (StringUtils.isEmpty(appdata) || isDev()) {
+			return Paths.get(s);
+		}
+		return Paths.get(appdata + "/Albion Market Client/" + s);
+	}
+
+	private boolean isDev() {
+		return new File("build.gradle").exists();
 	}
 
 	private ObjectMapper getObjectMapper() {
