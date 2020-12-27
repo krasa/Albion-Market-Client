@@ -408,14 +408,13 @@ public class MainController implements Initializable, DisposableBean {
 			if (alert.getResult() == ButtonType.YES) {
 				save();
 			}
-			;
 		}
 	}
 
 	private void save() {
 		try {
 			storage.save(this);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			log.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
