@@ -1,5 +1,6 @@
 package krasa.albion.service;
 
+import ch.qos.logback.core.util.EnvUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -29,7 +30,7 @@ public class Storage {
 
 	private Path path(String s) {
 		String appdata = System.getenv("APPDATA");
-		if (StringUtils.isEmpty(appdata) || isDev()) {
+		if (StringUtils.isEmpty(appdata) || isDev() || !EnvUtil.isWindows()) {
 			return Paths.get(s);
 		}
 		return Paths.get(appdata + "/Albion Market Client/" + s);
