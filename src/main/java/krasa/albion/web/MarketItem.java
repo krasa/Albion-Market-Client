@@ -1,5 +1,6 @@
 package krasa.albion.web;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import krasa.albion.domain.Quality;
 import krasa.albion.service.ItemsCache;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -13,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MarketItem {
 	private String requestPath;
 

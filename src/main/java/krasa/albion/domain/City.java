@@ -1,5 +1,6 @@
 package krasa.albion.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.scene.paint.Paint;
 
@@ -19,6 +20,11 @@ public enum City {
 	//					"Merlyn",
 	String name;
 	Paint color;
+
+	@JsonCreator
+	public static City forValue(String name) {
+		return from(name);
+	}
 
 	City(String name, Paint color) {
 		this.name = name;

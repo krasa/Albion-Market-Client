@@ -1,10 +1,12 @@
 package krasa.albion.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import krasa.albion.controller.MainController;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HistoryItem {
 
 	private List<String> tier = new ArrayList<>();

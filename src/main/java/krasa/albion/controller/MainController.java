@@ -272,10 +272,11 @@ public class MainController implements Initializable, DisposableBean {
 		stringAutoCompletionBinding.setDelay(0);
 
 
-		storage.load(this);
-		table.sort();
-
-		initialized = true;
+		Platform.runLater(() -> {
+			storage.load(this);
+			table.sort();
+			initialized = true;
+		});
 	}
 
 	private void initTable() {
@@ -400,12 +401,23 @@ public class MainController implements Initializable, DisposableBean {
 	@Override
 	public void destroy() throws Exception {
 		if (initialized) {
-			try {
-				storage.save(this);
-			} catch (Exception e) {
-				log.error(e.getMessage(), e);
-				throw new RuntimeException(e);
+			save();
+		} else {
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Save data?", ButtonType.YES, ButtonType.NO);
+			alert.showAndWait();
+			if (alert.getResult() == ButtonType.YES) {
+				save();
 			}
+			;
+		}
+	}
+
+	private void save() {
+		try {
+			storage.save(this);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 	}
 
