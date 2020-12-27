@@ -1,3 +1,3 @@
 # Albion-Market-Client
                                    
-image::screenshot.png[]
+![](screenshot.png)
