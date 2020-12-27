@@ -1,6 +1,8 @@
 package krasa.albion.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public enum Categories {
@@ -24,6 +26,25 @@ public enum Categories {
 	}
 
 	String name;
+
+	@JsonValue
+	public String getName() {
+		return name;
+	}
+
+	@JsonCreator
+	public static Categories forValue(String name) {
+		return from(name);
+	}
+
+	public static Categories from(String s) {
+		for (Categories value : Categories.values()) {
+			if (value.name.equals(s)) {
+				return value;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public String toString() {

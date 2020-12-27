@@ -2,6 +2,7 @@ package krasa.albion.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonValue;
 import javafx.scene.paint.Paint;
 
 
@@ -42,6 +43,11 @@ public enum City {
 
 	public Paint getColor() {
 		return color;
+	}
+
+	@JsonValue
+	public String getName() {
+		return name;
 	}
 
 	@Override
