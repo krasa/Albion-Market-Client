@@ -68,10 +68,13 @@ public class Storage {
 				}
 			}
 
-			Files.createDirectories(STORAGE.getParent());
+			Path parent = STORAGE.getParent();
+			if (parent != null) {
+				Files.createDirectories(parent);
+			}
 
 			Files.deleteIfExists(STORAGE_TMP);
-			Files.writeString(STORAGE_TMP, s.toString());
+			Files.writeString(STORAGE_TMP, s);
 			if (Files.exists(STORAGE)) {
 				Files.move(STORAGE, STORAGE_OLD, StandardCopyOption.REPLACE_EXISTING);
 			}
