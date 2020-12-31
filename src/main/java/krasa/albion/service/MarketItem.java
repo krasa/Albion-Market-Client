@@ -8,6 +8,12 @@ public class MarketItem {
 	private String id;
 	private String code;
 
+	public MarketItem(String id, String code, String name) {
+		this.id = id;
+		this.code = code;
+		this.name = name;
+	}
+
 	public MarketItem(String[] split) {
 		id = split[0].trim();
 		code = split[1].trim();

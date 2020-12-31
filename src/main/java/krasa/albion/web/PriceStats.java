@@ -2,6 +2,7 @@ package krasa.albion.web;
 
 import javafx.scene.control.ListView;
 import krasa.albion.commons.MyException;
+import krasa.albion.controller.MainController;
 import krasa.albion.domain.City;
 import krasa.albion.domain.Quality;
 import krasa.albion.domain.Tier;
@@ -21,7 +22,11 @@ public class PriceStats {
 	private final ItemsCache itemsCache;
 	private final List<String> qualities;
 
-	public PriceStats(ListView<City> cities, ListView qualities, ListView tiers, ItemsCache itemsCache) {
+	public PriceStats(MainController mainController) {
+		this(mainController.cities, mainController.quality, mainController.tier, mainController.itemsCache);
+	}
+
+	public PriceStats(ListView<City> cities, ListView<String> qualities, ListView<String> tiers, ItemsCache itemsCache) {
 		this.cities = cities.getSelectionModel().getSelectedItems();
 		this.qualities = qualities.getSelectionModel().getSelectedItems();
 		this.tiers = tiers.getSelectionModel().getSelectedItems();
@@ -32,7 +37,18 @@ public class PriceStats {
 		this.itemsCache = itemsCache;
 	}
 
+	public PriceStats(String city, String qualityName, String tier, ItemsCache itemsCache) {
+		cities = List.of(City.from(city));
+		tiers = List.of(tier);
+		qualities = List.of(qualityName);
+		this.itemsCache = itemsCache;
+	}
+
 	public String path(MarketItem item) {
+		return "https://www.albion-online-data.com/api/v2/stats/" + subpath() + "/" + pathSuffix(item);
+	}
+
+	protected String pathSuffix(MarketItem item) {
 		String code = item.getCode();
 
 		StringBuilder sb = new StringBuilder();
@@ -79,7 +95,12 @@ public class PriceStats {
 		}
 		normalize(sb);
 
-		return "https://www.albion-online-data.com/api/v2/stats/prices/" + sb.toString();
+		String s = sb.toString();
+		return s;
+	}
+
+	protected String subpath() {
+		return "prices";
 	}
 
 	private void normalize(StringBuilder sb) {

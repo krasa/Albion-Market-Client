@@ -13,8 +13,13 @@ public class Tier {
 			this.tier = -1;
 		} else {
 			String[] tierSplit = code.split("\\.");
-			enchant = Integer.parseInt(tierSplit[1]);
-			this.tier = Integer.parseInt(tierSplit[0]);
+			if (tierSplit.length == 2) {
+				enchant = Integer.parseInt(tierSplit[1]);
+				this.tier = Integer.parseInt(tierSplit[0]);
+			} else {
+				tier = Integer.parseInt(tierSplit[0]);
+				enchant = 0;
+			}
 		}
 	}
 

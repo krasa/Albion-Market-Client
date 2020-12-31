@@ -3,28 +3,26 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="krasa.albion.controller.MainController">
+<BorderPane prefHeight="856.0" prefWidth="1303.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="krasa.albion.controller.MainController">
 
     <top>
         <FlowPane hgap="10.0" prefHeight="45.0" prefWidth="380.0" vgap="10.0" BorderPane.alignment="CENTER">
             <children>
                 <Button fx:id="resetButton" mnemonicParsing="false" onAction="#reset" prefHeight="25.0"
                         prefWidth="15.0"/>
-                <Button fx:id="checkButton1" mnemonicParsing="false" prefHeight="25.0"
-                        prefWidth="20.0"/>
+                <Button fx:id="checkButton1" mnemonicParsing="false" prefHeight="25.0" prefWidth="20.0"/>
                 <TextField fx:id="name" prefHeight="25.0" prefWidth="600.0"/>
-                <Button fx:id="checkButton2" mnemonicParsing="false" prefHeight="25.0"
-                        prefWidth="20.0"
-                />
+                <Button fx:id="checkButton2" mnemonicParsing="false" prefHeight="25.0" prefWidth="20.0"/>
                 <Button mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="65.0" text="Clear"/>
+                <Button mnemonicParsing="false" onAction="#charts" prefHeight="25.0" prefWidth="65.0" text="Charts"/>
                 <Button onAction="#refreshData" text="Refresh"/>
                 <Button mnemonicParsing="false" onAction="#web" prefHeight="25.0" prefWidth="65.0" text="Web"/>
-                <TextField fx:id="code" prefHeight="25.0" prefWidth="300.0" editable="false"/>
+                <TextField fx:id="code" editable="false" prefHeight="25.0" prefWidth="300.0"/>
                 <Hyperlink onAction="#openAlbionOnline" text="Uses: albion-online-data.com"/>
                 <Button fx:id="test" mnemonicParsing="false" onAction="#test" prefHeight="25.0" prefWidth="65.0"
                         text="Test"/>
-                <Button fx:id="reloadTable" onAction="#reloadTable" text="Reload Table"/>
+                <Button fx:id="reloadTable" onAction="#reloadUi" text="Reload UI"/>
             </children>
             <padding>
                 <Insets left="10.0" top="10.0"/>
@@ -59,17 +57,27 @@
                 <Separator/>
                 <ListView fx:id="quality" minHeight="145.0" prefHeight="145.0" prefWidth="200.0"/>
                 <Separator/>
-                <ListView fx:id="tier" prefHeight="400.0" prefWidth="200.0"/>
+                <ListView fx:id="tier" VBox.vgrow="ALWAYS" prefHeight="400.0" prefWidth="200.0"/>
             </children>
         </VBox>
     </left>
     <center>
-        <VBox>
+        <AnchorPane fx:id="centerAnchor">
             <children>
-                <TableView fx:id="table" prefWidth="800.0" VBox.vgrow="ALWAYS">
-                </TableView>
+                <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0"
+                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <content>
+                        <VBox fx:id="centerVBox" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="0.0">
+                            <children>
+                                <TableView fx:id="table" minHeight="400.0"/>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
             </children>
-        </VBox>
+        </AnchorPane>
     </center>
     <right>
         <VBox>

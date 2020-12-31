@@ -9,6 +9,7 @@ import krasa.albion.controller.MainController;
 import krasa.albion.domain.Categories;
 import krasa.albion.domain.City;
 import krasa.albion.domain.HistoryItem;
+import krasa.albion.web.ChartItem;
 import krasa.albion.web.MarketItem;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,7 @@ public class Storage {
 		storageData.ipTo = mainController.ipTo.getValue();
 		storageData.tableItems = mainController.table.getItems();
 		storageData.history.addAll(mainController.history.getItems());
+		storageData.chartData = mainController.chartData;
 
 		try {
 			String s = getObjectMapper().writeValueAsString(storageData);
@@ -122,6 +124,8 @@ public class Storage {
 				tableItem.init(mainController.itemsCache);
 			}
 			mainController.table.getItems().addAll(storageData.tableItems);
+
+			mainController.chartData = storageData.chartData;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -134,6 +138,7 @@ public class Storage {
 		public double ipTo = 1400;
 		public List<MarketItem> tableItems = new ArrayList<>();
 		public List<Categories> categories = new ArrayList<>();
+		public ChartItem[] chartData;
 		private List<String> tier = new ArrayList<>();
 		private List<City> cities = new ArrayList<>();
 		private List<String> quality = new ArrayList<>();

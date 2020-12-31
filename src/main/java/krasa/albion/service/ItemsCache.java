@@ -218,11 +218,11 @@ public class ItemsCache {
 		return allCodes.contains(str);
 	}
 
-	public MarketItem getItemByName(String newValue) {
-		newValue = newValue.trim();
-		MarketItem marketItem = itemsByName.get(newValue);
+	public MarketItem getItemByName(String name) {
+		name = name.trim();
+		MarketItem marketItem = itemsByName.get(name);
 		if (marketItem == null) {
-			marketItem = itemsByName.get(StringUtils.substringBefore(newValue, "@"));
+			marketItem = itemsByName.get(StringUtils.substringBefore(name, "@"));
 		}
 		return marketItem;
 	}

@@ -30,24 +30,33 @@ if (!buildNumber.isNumber()) {
     buildNumber="0"
 }
 buildNumber = buildNumber.toInteger().next()
-new File('buildNumber').setText(buildNumber.toString())
+buildNumberFile.setText(buildNumber.toString())
 version = '0.3.'+buildNumber
 
 repositories {
-    mavenCentral()
+    mavenCentral()    
+    flatDir {
+        dirs 'libs'
+    }
 }
 project.ext.buildDate = new Date()
-
-dependencies {
+         
+dependencies {          
+//    https://github.com/krasa/extjfx/tree/14
+    implementation name: 'extjfx-chart-0.0.1'
+    implementation name: 'extjfx-fxml-0.0.1'
+    
+    def javaFx = '14.0.2.1'
+    
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.3'
     implementation 'commons-io:commons-io:2.8.0'
     implementation 'org.springframework:spring-web:5.3.2'
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'org.springframework.boot:spring-boot-starter:2.4.1'
-    implementation 'org.openjfx:javafx-controls:11.0.2'
-    implementation 'org.openjfx:javafx-fxml:11.0.2'
-    implementation 'org.openjfx:javafx-media:11.0.2'
+    implementation 'org.openjfx:javafx-controls:' + javaFx
+    implementation 'org.openjfx:javafx-fxml:' + javaFx
+    implementation 'org.openjfx:javafx-media:' + javaFx
     implementation 'net.rgielen:javafx-weaver-spring:1.3.0'
     implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'org.controlsfx:controlsfx:11.0.3'

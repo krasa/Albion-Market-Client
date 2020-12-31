@@ -190,4 +190,7 @@ public class MarketItem {
 	}
 
 
+	public krasa.albion.service.MarketItem toDomainItem() {
+		return new krasa.albion.service.MarketItem("-1", item_id, getName());
+	}
 }

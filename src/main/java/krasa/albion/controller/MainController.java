@@ -1,5 +1,6 @@
 package krasa.albion.controller;
 
+import cern.extjfx.chart.XYChartPane;
 import com.sun.javafx.application.HostServicesDelegate;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -13,15 +14,20 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import krasa.albion.application.Notifications;
 import krasa.albion.application.SpringbootJavaFxApplication;
+import krasa.albion.commons.ActionButtonTableCell;
 import krasa.albion.commons.CustomListViewSkin;
 import krasa.albion.domain.*;
 import krasa.albion.service.ItemsCache;
@@ -30,7 +36,9 @@ import krasa.albion.utils.MyUtils;
 import krasa.albion.utils.TableClipboardUtils;
 import krasa.albion.utils.ThreadDump;
 import krasa.albion.utils.ThreadDumper;
+import krasa.albion.web.ChartItem;
 import krasa.albion.web.MarketItem;
+import krasa.albion.web.PriceChart;
 import krasa.albion.web.PriceStats;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
@@ -51,6 +59,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
@@ -79,6 +88,10 @@ public class MainController implements Initializable, DisposableBean {
 	public Button checkButton2;
 	public Button resetButton;
 	public ListView<Categories> categories;
+	public LineChart lineChart;
+	public Pane chartPane;
+	public VBox centerVBox;
+	public AnchorPane centerAnchor;
 	transient volatile boolean changing;
 	public History history = new History();
 	private AutoCompletionBinding<String> stringAutoCompletionBinding;
@@ -90,6 +103,7 @@ public class MainController implements Initializable, DisposableBean {
 	public ItemsCache itemsCache;
 	private TableColumn<MarketItem, String> ipColumn;
 	private boolean initialized;
+	public ChartItem[] chartData;
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -275,6 +289,7 @@ public class MainController implements Initializable, DisposableBean {
 		Platform.runLater(() -> {
 			storage.load(this);
 			table.sort();
+			createChart(chartData);
 			initialized = true;
 		});
 	}
@@ -303,6 +318,15 @@ public class MainController implements Initializable, DisposableBean {
 //			addPriceColumn("buy_price_max", 100);
 		addBuyPriceColumn("Buy Price", 200);
 		addColumn("Age", "buyAge", 80);
+
+		TableColumn<MarketItem, Button> copy = new TableColumn<>();
+		copy.setCellFactory(ActionButtonTableCell.forTableColumn("Chart", (MarketItem p) -> {
+			chart(new PriceChart(p, itemsCache).path(p.toDomainItem()));
+			return p;
+
+		}));
+		table.getColumns().add(copy);
+
 //		addDateColumn("buy_price_min_date");
 //			addDateColumn("buy_price_max_date");
 		addColumn("item_id", "item_id");
@@ -360,6 +384,7 @@ public class MainController implements Initializable, DisposableBean {
 		checkButton1.setOnMouseClicked(eventHandler);
 		checkButton2.setOnMouseClicked(eventHandler);
 	}
+
 
 	@FXML
 	public void remoteDesktop(ActionEvent actionEvent) throws IOException {
@@ -563,7 +588,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void check(ActionEvent actionEvent) {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
+			String path = new PriceStats(this).path(item);
 			if (!HISTORY.equals(actionEvent.getSource())) {
 				history.add(path, this);
 				historyListView.getSelectionModel().clearSelection();
@@ -599,7 +624,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void web(ActionEvent actionEvent) throws URISyntaxException, IOException {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
+			String path = new PriceStats(this).path(item);
 
 			SpringbootJavaFxApplication instance = SpringbootJavaFxApplication.getInstance();
 			HostServicesDelegate hostServices = HostServicesDelegate.getInstance(instance);
@@ -609,7 +634,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void test(ActionEvent actionEvent) throws InterruptedException {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new PriceStats(cities, quality, tier, itemsCache).path(item);
+			String path = new PriceStats(this).path(item);
 			history.add(path, this);
 			log.info(path);
 		}
@@ -617,7 +642,8 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void clear(ActionEvent actionEvent) {
 		table.getItems().clear();
-
+		chartData = null;
+		createChart(new ChartItem[0]);
 	}
 
 	public void reset(ActionEvent actionEvent) {
@@ -627,13 +653,18 @@ public class MainController implements Initializable, DisposableBean {
 		tier.getSelectionModel().clearSelection();
 		quality.getSelectionModel().clearSelection();
 		table.getItems().clear();
+		categories.getSelectionModel().clearSelection();
+
+		chartData = null;
+		createChart(new ChartItem[0]);
 	}
 
-	public void reloadTable(ActionEvent actionEvent) {
+	public void reloadUi(ActionEvent actionEvent) {
 		ObservableList items = table.getItems();
 		initTable();
 		table.getItems().addAll(items);
 		table.refresh();
+		createChart(chartData);
 	}
 
 	public void refreshData(ActionEvent actionEvent) {
@@ -659,4 +690,39 @@ public class MainController implements Initializable, DisposableBean {
 		hostServices.showDocument("https://www.albion-online-data.com/");
 	}
 
+	public void charts(ActionEvent actionEvent) {
+		List<krasa.albion.service.MarketItem> eligibleItems = itemsCache.getEligibleItems(name.getText());
+		if (eligibleItems.size() != 1) {
+			throw new RuntimeException(eligibleItems.toString());
+		}
+		PriceChart priceChart = new PriceChart(this);
+
+		chart(priceChart.path(eligibleItems.get(0)));
+	}
+
+	private void chart(String path) {
+		CompletableFuture.runAsync(() -> {
+			try {
+				log.info(path);
+				chartData = new RestTemplate().getForObject(path, ChartItem[].class);
+				Platform.runLater(() -> {
+					createChart(chartData);
+				});
+			} finally {
+				Platform.runLater(() -> {
+					checking.setValue(false);
+				});
+			}
+		});
+	}
+
+	protected void createChart(ChartItem[] items) {
+		centerVBox.setFillWidth(true);
+		centerVBox.getChildren().removeIf(node -> node instanceof XYChartPane);
+		if (items != null) {
+			for (ChartItem item : items) {
+				centerVBox.getChildren().add(new ChartBuilder(this, item).create());
+			}
+		}
+	}
 }
