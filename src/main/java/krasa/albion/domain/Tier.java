@@ -29,6 +29,9 @@ public class Tier {
 			return code;
 		}
 		code = code.substring(2);
+		if (code.contains("@")) {
+			code = StringUtils.substringBeforeLast(code, "@");
+		}
 
 		if (tier == -1) {
 			return code;
