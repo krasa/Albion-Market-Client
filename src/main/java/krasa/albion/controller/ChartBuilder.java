@@ -53,9 +53,8 @@ public class ChartBuilder {
 		itemsSoldChart.setTitle("Items Sold");
 		itemsSoldChart.setAnimated(false);
 		itemsSoldChart.getYAxis().setLabel("Items Sold");
-		Color blue = Color.WHITE;
-		itemsSoldChart.getYAxis().setTickLabelFill(blue);
-		itemsSoldChart.getYAxis().lookup(".axis-label").setStyle("-fx-text-fill: " + blue.toString() + ";");
+		itemsSoldChart.getYAxis().setTickLabelFill(Color.WHITE);
+		itemsSoldChart.getYAxis().lookup(".axis-label").setStyle("-fx-text-fill: white;");
 		itemsSoldChart.getYAxis().setSide(Side.LEFT);
 
 		NumericAxis yPriceAxis = createYAxis();
@@ -67,9 +66,8 @@ public class ChartBuilder {
 		priceChart.setTitle("Average Price");
 		priceChart.setAnimated(false);
 		priceChart.setCreateSymbols(true);
-		Color red = Color.CYAN;
-		priceChart.getYAxis().setTickLabelFill(red);
-		priceChart.getYAxis().lookup(".axis-label").setStyle("-fx-text-fill: " + red.toString() + ";");
+		priceChart.getYAxis().setTickLabelFill(Color.CYAN);
+		priceChart.getYAxis().lookup(".axis-label").setStyle("-fx-text-fill: cyan;");
 		priceChart.getYAxis().setLabel("Average Price");
 		priceChart.getYAxis().setSide(Side.RIGHT);
 
