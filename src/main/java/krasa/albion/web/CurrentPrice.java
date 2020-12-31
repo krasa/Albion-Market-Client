@@ -14,19 +14,19 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.List;
 
-public class PriceStats {
-	private static final Logger log = LoggerFactory.getLogger(PriceStats.class);
+public class CurrentPrice {
+	private static final Logger log = LoggerFactory.getLogger(CurrentPrice.class);
 
 	private final List<City> cities;
 	private final List<String> tiers;
 	private final ItemsCache itemsCache;
 	private final List<String> qualities;
 
-	public PriceStats(MainController mainController) {
+	public CurrentPrice(MainController mainController) {
 		this(mainController.cities, mainController.quality, mainController.tier, mainController.itemsCache);
 	}
 
-	public PriceStats(ListView<City> cities, ListView<String> qualities, ListView<String> tiers, ItemsCache itemsCache) {
+	public CurrentPrice(ListView<City> cities, ListView<String> qualities, ListView<String> tiers, ItemsCache itemsCache) {
 		this.cities = cities.getSelectionModel().getSelectedItems();
 		this.qualities = qualities.getSelectionModel().getSelectedItems();
 		this.tiers = tiers.getSelectionModel().getSelectedItems();
@@ -37,7 +37,7 @@ public class PriceStats {
 		this.itemsCache = itemsCache;
 	}
 
-	public PriceStats(String city, String qualityName, String tier, ItemsCache itemsCache) {
+	public CurrentPrice(String city, String qualityName, String tier, ItemsCache itemsCache) {
 		cities = List.of(City.from(city));
 		tiers = List.of(tier);
 		qualities = List.of(qualityName);

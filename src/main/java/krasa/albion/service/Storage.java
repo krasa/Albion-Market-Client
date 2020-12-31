@@ -60,6 +60,7 @@ public class Storage {
 		storageData.tableItems = mainController.table.getItems();
 		storageData.history.addAll(mainController.history.getItems());
 		storageData.chartData = mainController.chartData;
+		storageData.splitPaneDivider = mainController.splitPane.getDividerPositions();
 
 		try {
 			String s = getObjectMapper().writeValueAsString(storageData);
@@ -126,6 +127,11 @@ public class Storage {
 			mainController.table.getItems().addAll(storageData.tableItems);
 
 			mainController.chartData = storageData.chartData;
+
+			if (storageData.splitPaneDivider != null) {
+				mainController.splitPane.setDividerPositions(storageData.splitPaneDivider);
+			}
+
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -139,6 +145,7 @@ public class Storage {
 		public List<MarketItem> tableItems = new ArrayList<>();
 		public List<Categories> categories = new ArrayList<>();
 		public ChartItem[] chartData;
+		public double[] splitPaneDivider;
 		private List<String> tier = new ArrayList<>();
 		private List<City> cities = new ArrayList<>();
 		private List<String> quality = new ArrayList<>();

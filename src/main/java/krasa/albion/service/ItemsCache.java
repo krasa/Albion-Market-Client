@@ -26,13 +26,13 @@ public class ItemsCache {
 	Map<String, MarketItem> itemsByName = new HashMap<>();
 	Set<String> allCodes = new HashSet<>();
 
-	private Map<String, ItemsWrapper.Items.Item> itemPowerByCode;
+	private Map<String, ItemsWrapper.Items.Item> powerItemsByCode;
 	private ItemsWrapper.Items itemDetails;
 
 	public ItemsCache() throws Exception {
-		List<String> strings = IOUtils.readLines(Launcher.class.getResourceAsStream("/ao-bin-dumps/formatted/items.txt"), "UTF-8");
-		for (String string : strings) {
-			String[] split = string.split(":");
+		List<String> itemsTxt = IOUtils.readLines(Launcher.class.getResourceAsStream("/ao-bin-dumps/formatted/items.txt"), "UTF-8");
+		for (String s : itemsTxt) {
+			String[] split = s.split(":");
 			if (split.length == 3) {
 				String code = split[1].trim();
 				if (code.contains("_NONTRADABLE")) {
@@ -78,16 +78,16 @@ public class ItemsCache {
 		}
 
 
-		itemPowerByCode = new HashMap<>();
+		powerItemsByCode = new HashMap<>();
 		ObjectMapper xmlMapper = getObjectMapper();
 //		Map map = xmlMapper.readValue(file, Map.class);
 		ItemsWrapper items = xmlMapper.readValue(Launcher.class.getResourceAsStream("/ao-bin-dumps/items.json"), ItemsWrapper.class);
 		itemDetails = items.items;
 		for (ItemsWrapper.Items.Item item : itemDetails.equipmentitem) {
-			itemPowerByCode.put(item.uniquename, item);
+			powerItemsByCode.put(item.uniquename, item);
 		}
 		for (ItemsWrapper.Items.Item item : itemDetails.weapon) {
-			itemPowerByCode.put(item.uniquename, item);
+			powerItemsByCode.put(item.uniquename, item);
 		}
 	}
 
@@ -236,7 +236,7 @@ public class ItemsCache {
 	}
 
 	private String getBaseIp(String item_id) {
-		ItemsWrapper.Items.Item item = itemPowerByCode.get(StringUtils.substringBefore(item_id, "@"));
+		ItemsWrapper.Items.Item item = powerItemsByCode.get(StringUtils.substringBefore(item_id, "@"));
 		if (item != null) {
 			String level = StringUtils.substringAfter(item_id, "@");
 			if (StringUtils.isNotEmpty(level)) {

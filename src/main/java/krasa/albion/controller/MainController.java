@@ -37,9 +37,9 @@ import krasa.albion.utils.TableClipboardUtils;
 import krasa.albion.utils.ThreadDump;
 import krasa.albion.utils.ThreadDumper;
 import krasa.albion.web.ChartItem;
+import krasa.albion.web.CurrentPrice;
 import krasa.albion.web.MarketItem;
 import krasa.albion.web.PriceChart;
-import krasa.albion.web.PriceStats;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
@@ -92,6 +92,7 @@ public class MainController implements Initializable, DisposableBean {
 	public Pane chartPane;
 	public VBox centerVBox;
 	public AnchorPane centerAnchor;
+	public SplitPane splitPane;
 	transient volatile boolean changing;
 	public History history = new History();
 	private AutoCompletionBinding<String> stringAutoCompletionBinding;
@@ -115,7 +116,6 @@ public class MainController implements Initializable, DisposableBean {
 //		reloadTable.setMaxWidth(0);
 
 //		}
-
 
 		checkButton2.disableProperty().bind(
 				name.textProperty().isEmpty().or(checking));
@@ -288,6 +288,7 @@ public class MainController implements Initializable, DisposableBean {
 
 		Platform.runLater(() -> {
 			storage.load(this);
+
 			table.sort();
 			createChart(chartData);
 			initialized = true;
@@ -588,7 +589,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void check(ActionEvent actionEvent) {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new PriceStats(this).path(item);
+			String path = new CurrentPrice(this).path(item);
 			if (!HISTORY.equals(actionEvent.getSource())) {
 				history.add(path, this);
 				historyListView.getSelectionModel().clearSelection();
@@ -624,7 +625,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void web(ActionEvent actionEvent) throws URISyntaxException, IOException {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new PriceStats(this).path(item);
+			String path = new CurrentPrice(this).path(item);
 
 			SpringbootJavaFxApplication instance = SpringbootJavaFxApplication.getInstance();
 			HostServicesDelegate hostServices = HostServicesDelegate.getInstance(instance);
@@ -634,7 +635,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void test(ActionEvent actionEvent) throws InterruptedException {
 		for (krasa.albion.service.MarketItem item : itemsCache.getEligibleItems(name.getText())) {
-			String path = new PriceStats(this).path(item);
+			String path = new CurrentPrice(this).path(item);
 			history.add(path, this);
 			log.info(path);
 		}
@@ -717,7 +718,6 @@ public class MainController implements Initializable, DisposableBean {
 	}
 
 	protected void createChart(ChartItem[] items) {
-		centerVBox.setFillWidth(true);
 		centerVBox.getChildren().removeIf(node -> node instanceof XYChartPane);
 		if (items != null) {
 			for (ChartItem item : items) {

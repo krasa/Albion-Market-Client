@@ -47,6 +47,7 @@ public class ChartBuilder {
 		yItemsSoldAxis.setLowerBound(0);
 //	    yRainfallAxis.setUpperBound(100);
 		yItemsSoldAxis.setAutoRanging(true);
+		yItemsSoldAxis.setForceZeroInRange(true);
 
 
 		BarChart<String, Number> itemsSoldChart = new BarChart<>(createXAxis(), yItemsSoldAxis);
@@ -94,7 +95,7 @@ public class ChartBuilder {
 		priceChart.getData().add(new Series<>("Price", FXCollections.observableArrayList(itemPriceData)));
 
 
-		chartPane.setBorder(new Border(new BorderStroke(City.forValue(item.getLocation()).getColor(), BorderStrokeStyle.SOLID, new CornerRadii(25), BorderWidths.DEFAULT)));
+		chartPane.setBorder(new Border(new BorderStroke(City.forValue(item.getLocation()).getColor(), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 //		chartPane.setPadding(new Insets(5,5,5,5));   
 		return chartPane;
 	}

@@ -2,6 +2,26 @@
     -fx-bar-fill: gray;
 }
 
+.value-indicator-label {
+    -fx-background-color: #f4e242;
+    -fx-border-color: black;
+    -fx-border-radius: 2.0;
+    -fx-font-size: 14.0;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-padding: 1.0 2.0 1.0 2.0;
+}
+
+.range-indicator-label {
+    -fx-background-color: #f4e242;
+    -fx-border-color: black;
+    -fx-border-radius: 2.0;
+    -fx-font-size: 14.0;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-padding: 1.0 2.0 1.0 2.0;
+}
+
 .chart-datapoint-tooltip-label {
     -fx-background-color: rgb(50, 50, 50);
     -fx-border-color: black;

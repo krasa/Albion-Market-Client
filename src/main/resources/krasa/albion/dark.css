@@ -67,3 +67,7 @@
 .hyperlink:visited {
     -fx-text-fill: cyan;
 }
+
+#charts {
+    -fx-background: rgb(20, 20, 20);
+}

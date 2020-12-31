@@ -6,7 +6,7 @@ import krasa.albion.domain.City;
 import krasa.albion.service.ItemsCache;
 import krasa.albion.service.MarketItem;
 
-public class PriceChart extends PriceStats {
+public class PriceChart extends CurrentPrice {
 	public PriceChart(MainController mainController) {
 		super(mainController);
 	}

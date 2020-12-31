@@ -57,27 +57,28 @@
                 <Separator/>
                 <ListView fx:id="quality" minHeight="145.0" prefHeight="145.0" prefWidth="200.0"/>
                 <Separator/>
-                <ListView fx:id="tier" VBox.vgrow="ALWAYS" prefHeight="400.0" prefWidth="200.0"/>
+                <ListView fx:id="tier" prefHeight="400.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
             </children>
         </VBox>
     </left>
     <center>
-        <AnchorPane fx:id="centerAnchor">
-            <children>
-                <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0"
-                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <content>
-                        <VBox fx:id="centerVBox" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity"
-                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                              AnchorPane.topAnchor="0.0">
-                            <children>
-                                <TableView fx:id="table" minHeight="400.0"/>
-                            </children>
-                        </VBox>
-                    </content>
-                </ScrollPane>
-            </children>
-        </AnchorPane>
+        <SplitPane fx:id="splitPane" dividerPositions="0.5" orientation="VERTICAL">
+            <items>
+                <TableView fx:id="table" minHeight="20.0"/>
+                <AnchorPane fx:id="centerAnchor">
+                    <children>
+                        <ScrollPane id="charts" fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0"
+                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <content>
+                                <VBox fx:id="centerVBox" alignment="TOP_CENTER" minHeight="-Infinity"
+                                      minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
     </center>
     <right>
         <VBox>
