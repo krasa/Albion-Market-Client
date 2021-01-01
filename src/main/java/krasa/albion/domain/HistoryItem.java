@@ -10,7 +10,7 @@ import java.util.List;
 public class HistoryItem {
 
 	private List<String> tier = new ArrayList<>();
-	private List<City> cities = new ArrayList<>();
+	private List<String> cities = new ArrayList<>();
 	private List<String> quality = new ArrayList<>();
 	private String name = "";
 	private String path = "";
@@ -60,11 +60,11 @@ public class HistoryItem {
 		this.tier = tier;
 	}
 
-	public List<City> getCities() {
+	public List<String> getCities() {
 		return cities;
 	}
 
-	public void setCities(List<City> cities) {
+	public void setCities(List<String> cities) {
 		this.cities = cities;
 	}
 

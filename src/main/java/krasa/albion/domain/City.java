@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonValue;
 import javafx.scene.paint.Paint;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public enum City {
@@ -16,7 +20,7 @@ public enum City {
 	MARTLOCK("Martlock", paint("068FA3")),
 	THETFORD("Thetford", paint("9C19CD")),
 	BRIDGEWATCH("Bridgewatch", paint("EB9026")),
-	BLACK_MARKET("Black Market", null);
+	BLACK_MARKET("Black Market", paint("FFFFFF"));
 
 	//					"Merlyn",
 	String name;
@@ -39,6 +43,10 @@ public enum City {
 			}
 		}
 		return null;
+	}
+
+	public static List<String> getListViewItems() {
+		return Arrays.stream(values()).map(city -> city.name).collect(Collectors.toList());
 	}
 
 	public Paint getColor() {

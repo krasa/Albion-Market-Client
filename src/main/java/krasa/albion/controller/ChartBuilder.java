@@ -95,7 +95,10 @@ public class ChartBuilder {
 		priceChart.getData().add(new Series<>("Price", FXCollections.observableArrayList(itemPriceData)));
 
 
-		chartPane.setBorder(new Border(new BorderStroke(City.forValue(item.getLocation()).getColor(), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+		City city = City.forValue(item.getLocation());
+		if (city != null) {
+			chartPane.setBorder(new Border(new BorderStroke(city.getColor(), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+		}
 //		chartPane.setPadding(new Insets(5,5,5,5));   
 		return chartPane;
 	}

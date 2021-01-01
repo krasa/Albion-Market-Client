@@ -75,7 +75,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public TextArea status;
 	public TextField name;
-	public javafx.scene.control.ListView<City> cities;
+	public javafx.scene.control.ListView<String> cities;
 	public javafx.scene.control.TableView<MarketItem> table;
 	public ListView<String> quality;
 	public ListView<String> tier;
@@ -152,7 +152,7 @@ public class MainController implements Initializable, DisposableBean {
 					}
 					log.info(storageData.getPath());
 					cities.getSelectionModel().clearSelection();
-					for (City city : storageData.getCities()) {
+					for (String city : storageData.getCities()) {
 						cities.getSelectionModel().select(city);
 					}
 					quality.getSelectionModel().clearSelection();
@@ -332,7 +332,7 @@ public class MainController implements Initializable, DisposableBean {
 // programmatically set a sort column:
 		table.getSortOrder().add(ipColumn);
 
-		cities.setItems(FXCollections.observableArrayList(City.values()));
+		cities.setItems(FXCollections.observableArrayList(City.getListViewItems()));
 
 		ObservableList<String> tiers = FXCollections.observableArrayList();
 		tier.setItems(tiers);

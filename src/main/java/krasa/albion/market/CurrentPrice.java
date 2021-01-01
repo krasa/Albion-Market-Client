@@ -17,7 +17,7 @@ import java.util.List;
 public class CurrentPrice {
 	private static final Logger log = LoggerFactory.getLogger(CurrentPrice.class);
 
-	private final List<City> cities;
+	private final List<String> cities;
 	private final List<String> tiers;
 	private final ItemsCache itemsCache;
 	private final List<String> qualities;
@@ -26,7 +26,7 @@ public class CurrentPrice {
 		this(mainController.cities, mainController.quality, mainController.tier, mainController.itemsCache);
 	}
 
-	public CurrentPrice(ListView<City> cities, ListView<String> qualities, ListView<String> tiers, ItemsCache itemsCache) {
+	public CurrentPrice(ListView<String> cities, ListView<String> qualities, ListView<String> tiers, ItemsCache itemsCache) {
 		this.cities = cities.getSelectionModel().getSelectedItems();
 		this.qualities = qualities.getSelectionModel().getSelectedItems();
 		this.tiers = tiers.getSelectionModel().getSelectedItems();
@@ -38,7 +38,7 @@ public class CurrentPrice {
 	}
 
 	public CurrentPrice(String city, String qualityName, String tier, ItemsCache itemsCache) {
-		cities = List.of(City.from(city));
+		cities = List.of(city);
 		tiers = List.of(tier);
 		qualities = List.of(qualityName);
 		this.itemsCache = itemsCache;
@@ -77,9 +77,9 @@ public class CurrentPrice {
 		}
 		normalize(sb);
 		sb.append("?");
-		if (!cities.isEmpty() && !cities.contains(City.ALL)) {
+		if (!cities.isEmpty() && !cities.contains(City.ALL.getName())) {
 			sb.append("locations=");
-			for (City city : cities) {
+			for (String city : cities) {
 				sb.append(city);
 				sb.append(",");
 			}

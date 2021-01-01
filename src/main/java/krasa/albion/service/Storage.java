@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import krasa.albion.controller.MainController;
 import krasa.albion.domain.Categories;
-import krasa.albion.domain.City;
 import krasa.albion.domain.HistoryItem;
 import krasa.albion.market.ChartItem;
 import krasa.albion.market.MarketItem;
@@ -106,7 +105,7 @@ public class Storage {
 			mainController.ipTo.setValue(storageData.ipTo);
 
 			mainController.cities.getSelectionModel().clearSelection();
-			for (City s : storageData.cities) {
+			for (String s : storageData.cities) {
 				mainController.cities.getSelectionModel().select(s);
 			}
 			mainController.quality.getSelectionModel().clearSelection();
@@ -147,7 +146,7 @@ public class Storage {
 		public List<ChartItem> chartData = new ArrayList<>();
 		public double[] splitPaneDivider;
 		private List<String> tier = new ArrayList<>();
-		private List<City> cities = new ArrayList<>();
+		private List<String> cities = new ArrayList<>();
 		private List<String> quality = new ArrayList<>();
 		private List<HistoryItem> history = new ArrayList<>();
 		private String name = "";
