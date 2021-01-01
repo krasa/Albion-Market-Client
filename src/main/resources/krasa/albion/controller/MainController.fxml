@@ -15,7 +15,7 @@
                 <TextField fx:id="name" prefHeight="25.0" prefWidth="600.0"/>
                 <Button fx:id="checkButton2" mnemonicParsing="false" prefHeight="25.0" prefWidth="20.0"/>
                 <Button mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="65.0" text="Clear"/>
-                <Button mnemonicParsing="false" onAction="#charts" prefHeight="25.0" prefWidth="65.0" text="Charts"/>
+                <Button mnemonicParsing="false" fx:id="charts" prefHeight="25.0" prefWidth="65.0" text="Charts"/>
                 <Button onAction="#refreshData" text="Refresh"/>
                 <Button mnemonicParsing="false" onAction="#web" prefHeight="25.0" prefWidth="65.0" text="Web"/>
                 <TextField fx:id="code" editable="false" prefHeight="25.0" prefWidth="300.0"/>
@@ -70,8 +70,8 @@
                         <ScrollPane id="charts" fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0"
                                     AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <content>
-                                <VBox fx:id="centerVBox" alignment="TOP_CENTER" minHeight="-Infinity"
-                                      minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                <VBox fx:id="centerVBox" alignment="TOP_LEFT" minHeight="-Infinity"
+                                      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                             </content>
                         </ScrollPane>

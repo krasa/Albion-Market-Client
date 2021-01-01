@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import krasa.albion.controller.MainController;
+import krasa.albion.controller.MyXYChartPane;
 import krasa.albion.domain.Categories;
 import krasa.albion.domain.HistoryItem;
-import krasa.albion.market.ChartItem;
 import krasa.albion.market.MarketItem;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -58,7 +58,7 @@ public class Storage {
 		storageData.ipTo = mainController.ipTo.getValue();
 		storageData.tableItems = mainController.table.getItems();
 		storageData.history.addAll(mainController.history.getItems());
-		storageData.chartData = mainController.chartData;
+		storageData.charts = mainController.getChartData();
 		storageData.splitPaneDivider = mainController.splitPane.getDividerPositions();
 
 		try {
@@ -87,7 +87,7 @@ public class Storage {
 		}
 	}
 
-	public void load(MainController mainController) {
+	public StorageData load(MainController mainController) {
 		try {
 			StorageData storageData;
 			if (Files.exists(STORAGE)) {
@@ -125,12 +125,10 @@ public class Storage {
 			}
 			mainController.table.getItems().addAll(storageData.tableItems);
 
-			mainController.chartData = storageData.chartData;
-
 			if (storageData.splitPaneDivider != null) {
 				mainController.splitPane.setDividerPositions(storageData.splitPaneDivider);
 			}
-
+			return storageData;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -143,7 +141,7 @@ public class Storage {
 		public double ipTo = 1400;
 		public List<MarketItem> tableItems = new ArrayList<>();
 		public List<Categories> categories = new ArrayList<>();
-		public List<ChartItem> chartData = new ArrayList<>();
+		public List<MyXYChartPane.ChartData> charts = new ArrayList<>();
 		public double[] splitPaneDivider;
 		private List<String> tier = new ArrayList<>();
 		private List<String> cities = new ArrayList<>();

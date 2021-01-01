@@ -92,6 +92,7 @@ public class MainController implements Initializable, DisposableBean {
 	public VBox centerVBox;
 	public AnchorPane centerAnchor;
 	public SplitPane splitPane;
+	public Button charts;
 	transient volatile boolean changing;
 	public History history = new History();
 	private AutoCompletionBinding<String> stringAutoCompletionBinding;
@@ -103,7 +104,6 @@ public class MainController implements Initializable, DisposableBean {
 	public ItemsCache itemsCache;
 	private TableColumn<MarketItem, String> ipColumn;
 	private boolean initialized;
-	public List<ChartItem> chartData = new ArrayList<>();
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -139,7 +139,7 @@ public class MainController implements Initializable, DisposableBean {
 
 			}
 		});
-
+		charts.setOnMouseClicked(event -> charts(event));
 
 		historyListView.setItems(history.getItems());
 		historyListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -284,10 +284,10 @@ public class MainController implements Initializable, DisposableBean {
 
 
 		Platform.runLater(() -> {
-			storage.load(this);
+			Storage.StorageData load = storage.load(this);
 
 			table.sort();
-			createChart(false, chartData);
+			createCharts(load.charts);
 			initialized = true;
 		});
 	}
@@ -489,7 +489,7 @@ public class MainController implements Initializable, DisposableBean {
 		TableColumn<MarketItem, Button> column = new TableColumn<>();
 		column.setCellFactory(param -> {
 			ActionButtonTableCell<MarketItem> col = new ActionButtonTableCell<>("Chart", (actionEvent, p) -> {
-				chart(actionEvent.isControlDown(), new PriceChart(p, itemsCache).path(p.toDomainItem()));
+				chart(actionEvent.isControlDown(), actionEvent.isAltDown(), actionEvent.isShiftDown(), new PriceChart(p, itemsCache).path(p.toDomainItem()));
 				return p;
 			});
 			col.tooltip(new Tooltip("Hold Ctrl for adding"));
@@ -652,8 +652,7 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void clear(ActionEvent actionEvent) {
 		table.getItems().clear();
-		chartData.clear();
-		createChart(false, Collections.emptyList());
+		removeCharts();
 	}
 
 	public void reset(ActionEvent actionEvent) {
@@ -665,8 +664,7 @@ public class MainController implements Initializable, DisposableBean {
 		table.getItems().clear();
 		categories.getSelectionModel().clearSelection();
 
-		chartData = null;
-		createChart(false, Collections.emptyList());
+		removeCharts();
 	}
 
 	public void reloadUi(ActionEvent actionEvent) {
@@ -674,8 +672,11 @@ public class MainController implements Initializable, DisposableBean {
 		initTable();
 		table.getItems().addAll(items);
 		table.refresh();
-		createChart(false, chartData);
+		List<MyXYChartPane.ChartData> chartData = getChartData();
+		removeCharts();
+		createCharts(chartData);
 	}
+
 
 	public void refreshData(ActionEvent actionEvent) {
 		ObservableList<MarketItem> items = table.getItems();
@@ -700,28 +701,31 @@ public class MainController implements Initializable, DisposableBean {
 		hostServices.showDocument("https://www.albion-online-data.com/");
 	}
 
-	public void charts(ActionEvent actionEvent) {
+	private void createCharts(List<MyXYChartPane.ChartData> chartData) {
+		for (int i = chartData.size() - 1; i >= 0; i--) {
+			MyXYChartPane.ChartData data = chartData.get(i);
+			createChart(true, true, false, data);
+		}
+	}
+
+	public void charts(MouseEvent event) {
 		List<krasa.albion.service.MarketItem> eligibleItems = itemsCache.getEligibleItems(name.getText());
 		if (eligibleItems.size() != 1) {
 			throw new RuntimeException(eligibleItems.toString());
 		}
 		PriceChart priceChart = new PriceChart(this);
 
-		chart(false, priceChart.path(eligibleItems.get(0)));
+		chart(event.isControlDown(), event.isAltDown(), event.isShiftDown(), priceChart.path(eligibleItems.get(0)));
 	}
 
-	private void chart(boolean add, String path) {
+	private void chart(boolean add, boolean altDown, boolean shiftDown, String path) {
 		checking.setValue(true);
 		CompletableFuture.runAsync(() -> {
 			try {
 				log.info(path);
 				ChartItem[] newItems = new RestTemplate().getForObject(path, ChartItem[].class);
-				if (!add) {
-					chartData.clear();
-				}
-				chartData.addAll(Arrays.asList(newItems));
 				Platform.runLater(() -> {
-					createChart(add, Arrays.asList(newItems));
+					createChart(add, altDown, shiftDown, new MyXYChartPane.ChartData(Arrays.asList(newItems)));
 				});
 			} finally {
 				Platform.runLater(() -> {
@@ -731,14 +735,48 @@ public class MainController implements Initializable, DisposableBean {
 		});
 	}
 
-	protected void createChart(boolean add, List<ChartItem> items) {
-		if (!add) {
-			centerVBox.getChildren().removeIf(node -> node instanceof XYChartPane);
-		}
-		if (items != null) {
-			for (ChartItem item : items) {
-				centerVBox.getChildren().add(new ChartBuilder(this, item).create());
+	protected void createChart(boolean ctrlDown, boolean altDown, boolean shiftDown, MyXYChartPane.ChartData data) {
+		if (!data.getItems().isEmpty()) {
+			if (shiftDown) {
+				ObservableList<Node> children = centerVBox.getChildren();
+				if (!children.isEmpty()) {
+					Node node = children.get(0);
+					MyXYChartPane c = (MyXYChartPane) node;
+					children.remove(c);
+					children.add(0, new ChartBuilder(this, c.getItemsAndAdd(data)).create());
+				} else {
+					children.add(0, new ChartBuilder(this, data).create());
+				}
+			} else if (altDown) {
+				if (!ctrlDown) {
+					removeCharts();
+				}
+				centerVBox.getChildren().add(0, new ChartBuilder(this, data).create());
+			} else if (ctrlDown) {
+				for (ChartItem item : data.getItems()) {
+					centerVBox.getChildren().add(0, new ChartBuilder(this, new MyXYChartPane.ChartData(Collections.singletonList(item))).create());
+				}
+			} else {
+				removeCharts();
+				for (ChartItem item : data.getItems()) {
+					centerVBox.getChildren().add(0, new ChartBuilder(this, new MyXYChartPane.ChartData(Collections.singletonList(item))).create());
+				}
 			}
 		}
+	}
+
+	private boolean removeCharts() {
+		return centerVBox.getChildren().removeIf(node -> node instanceof XYChartPane);
+	}
+
+	public List<MyXYChartPane.ChartData> getChartData() {
+		ArrayList<MyXYChartPane.ChartData> chartItems = new ArrayList<>();
+		ObservableList<Node> children = centerVBox.getChildren();
+		for (Node child : children) {
+			if (child instanceof MyXYChartPane) {
+				chartItems.add(((MyXYChartPane) child).getChartData());
+			}
+		}
+		return chartItems;
 	}
 }

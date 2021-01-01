@@ -1,33 +1,31 @@
 package krasa.albion.controller;
 
 import cern.extjfx.chart.NumericAxis;
-import cern.extjfx.chart.XYChartPane;
 import cern.extjfx.chart.plugins.DataPointTooltip;
 import javafx.collections.FXCollections;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import krasa.albion.Launcher;
-import krasa.albion.domain.City;
 import krasa.albion.market.ChartItem;
 import krasa.albion.service.ItemsCache;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ChartBuilder {
-	private final ChartItem item;
 	private SimpleDateFormat simpleDateFormat;
 	private ItemsCache itemsCache;
+	private final MyXYChartPane.ChartData chartData;
 
-	public ChartBuilder(MainController mainController, ChartItem item) {
-		this.item = item;
+
+	public ChartBuilder(MainController mainController, MyXYChartPane.ChartData chartData) {
+		this.chartData = chartData;
 		itemsCache = mainController.itemsCache;
 		simpleDateFormat = new SimpleDateFormat("dd.MM.");
 	}
@@ -37,11 +35,11 @@ public class ChartBuilder {
 	}
 
 	protected String name(ChartItem response) {
-		return itemsCache.getName(response.getItem_id()) + " - " + response.getTier() + " - " + response.getQualityName() + " - " + response.getLocation();
+		return response.getTier() + " - " + response.getQualityName() + " - " + response.getLocation() + " - " + itemsCache.getName(response.getItem_id());
 	}
 
-	public XYChartPane<String, Number> create() {
-		String name = name(item);
+	public MyXYChartPane create() {
+//		String name = name(item);
 
 		NumericAxis yItemsSoldAxis = createYAxis();
 		yItemsSoldAxis.setLowerBound(0);
@@ -72,35 +70,55 @@ public class ChartBuilder {
 		priceChart.getYAxis().setLabel("Average Price");
 		priceChart.getYAxis().setSide(Side.RIGHT);
 
-		XYChartPane<String, Number> chartPane = new XYChartPane<>(itemsSoldChart);
-		chartPane.setTitle(name);
+		MyXYChartPane chartPane = new MyXYChartPane(chartData, itemsSoldChart);
+//		chartPane.setTitle(name);
 		chartPane.setCommonYAxis(false);
 		chartPane.getOverlayCharts().add(priceChart);
 		chartPane.getPlugins().add(new DataPointTooltip<>());
 		chartPane.getStylesheets().add(Launcher.class.getResource("charts/overlayChart.css").toExternalForm());
 
+		HashMap<String, Integer> strings = new LinkedHashMap<>();
+
+		List<ChartItem> items = new ArrayList<>(chartData.getItems());
+		HashSet<Object> seen = new HashSet<>();
+		items.removeIf(e -> !seen.add(e.getItem_id() + e.getLocation() + e.getQuality()));
+
+		for (ChartItem item : items) {
+			List<Data<String, Number>> itemPriceData = new ArrayList<>();
+
+			for (ChartItem.Data d : item.getData()) {
+				String date = formatDate(d);
+				Integer item_count = d.getItem_count();
+				Integer avg_price = d.getAvg_price();
+
+
+				strings.merge(date, item_count, Integer::sum);
+
+				itemPriceData.add(new Data<>(date, avg_price));
+			}
+
+			priceChart.getData().add(new Series<>(name(item), FXCollections.observableArrayList(itemPriceData)));
+		}
+
 		List<Data<String, Number>> itemCountData = new ArrayList<>();
-		List<Data<String, Number>> itemPriceData = new ArrayList<>();
-
-		for (ChartItem.Data d : item.getData()) {
-			String date = formatDate(d);
-			Integer item_count = d.getItem_count();
-			Integer avg_price = d.getAvg_price();
-
-			itemCountData.add(new Data<>(date, item_count));
-			itemPriceData.add(new Data<>(date, avg_price));
+		for (Map.Entry<String, Integer> stringIntegerEntry : strings.entrySet()) {
+			String key = stringIntegerEntry.getKey();
+			Integer value = stringIntegerEntry.getValue();
+			itemCountData.add(new Data<>(key, value));
 		}
-
 		itemsSoldChart.getData().add(new Series<>("Sold", FXCollections.observableArrayList(itemCountData)));
-		priceChart.getData().add(new Series<>("Price", FXCollections.observableArrayList(itemPriceData)));
 
-
-		City city = City.forValue(item.getLocation());
-		if (city != null) {
-			chartPane.setBorder(new Border(new BorderStroke(city.getColor(), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-		}
+//		}
+//		City city = City.forValue(item.getLocation());
+//		if (city != null) {
+//			chartPane.setBorder(new Border(new BorderStroke(city.getColor(), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+//		}
 //		chartPane.setPadding(new Insets(5,5,5,5));   
 		return chartPane;
+	}
+
+	public Node addSeries(MyXYChartPane c) {
+		return null;
 	}
 
 	private NumericAxis createYAxis() {
@@ -117,4 +135,6 @@ public class ChartBuilder {
 		xAxis.setAnimated(false);
 		return xAxis;
 	}
+
+
 }
