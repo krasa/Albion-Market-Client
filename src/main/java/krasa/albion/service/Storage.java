@@ -9,8 +9,8 @@ import krasa.albion.controller.MainController;
 import krasa.albion.domain.Categories;
 import krasa.albion.domain.City;
 import krasa.albion.domain.HistoryItem;
-import krasa.albion.web.ChartItem;
-import krasa.albion.web.MarketItem;
+import krasa.albion.market.ChartItem;
+import krasa.albion.market.MarketItem;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -144,7 +144,7 @@ public class Storage {
 		public double ipTo = 1400;
 		public List<MarketItem> tableItems = new ArrayList<>();
 		public List<Categories> categories = new ArrayList<>();
-		public ChartItem[] chartData;
+		public List<ChartItem> chartData = new ArrayList<>();
 		public double[] splitPaneDivider;
 		private List<String> tier = new ArrayList<>();
 		private List<City> cities = new ArrayList<>();

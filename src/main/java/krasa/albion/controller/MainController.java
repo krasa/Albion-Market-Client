@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,16 +31,16 @@ import krasa.albion.application.SpringbootJavaFxApplication;
 import krasa.albion.commons.ActionButtonTableCell;
 import krasa.albion.commons.CustomListViewSkin;
 import krasa.albion.domain.*;
+import krasa.albion.market.ChartItem;
+import krasa.albion.market.CurrentPrice;
+import krasa.albion.market.MarketItem;
+import krasa.albion.market.PriceChart;
 import krasa.albion.service.ItemsCache;
 import krasa.albion.service.Storage;
 import krasa.albion.utils.MyUtils;
 import krasa.albion.utils.TableClipboardUtils;
 import krasa.albion.utils.ThreadDump;
 import krasa.albion.utils.ThreadDumper;
-import krasa.albion.web.ChartItem;
-import krasa.albion.web.CurrentPrice;
-import krasa.albion.web.MarketItem;
-import krasa.albion.web.PriceChart;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
@@ -50,6 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
@@ -57,10 +59,7 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -104,18 +103,16 @@ public class MainController implements Initializable, DisposableBean {
 	public ItemsCache itemsCache;
 	private TableColumn<MarketItem, String> ipColumn;
 	private boolean initialized;
-	public ChartItem[] chartData;
+	public List<ChartItem> chartData = new ArrayList<>();
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
-//		boolean expertMode = false;
-//		if (expertMode) {
-//		test.setVisible(true);
-//		test.setMaxWidth(0);
-//		reloadTable.setVisible(true);
-//		reloadTable.setMaxWidth(0);
-
-//		}
+		if (!new File("build.gradle").exists()) {
+			remove(test);
+			remove(reloadTable);
+		}
+		checkButton2.setTooltip(new Tooltip("Hold Ctrl for adding"));
+		checkButton1.setTooltip(new Tooltip("Hold Ctrl for adding"));
 
 		checkButton2.disableProperty().bind(
 				name.textProperty().isEmpty().or(checking));
@@ -290,9 +287,14 @@ public class MainController implements Initializable, DisposableBean {
 			storage.load(this);
 
 			table.sort();
-			createChart(chartData);
+			createChart(false, chartData);
 			initialized = true;
 		});
+	}
+
+	protected void remove(Node n) {
+		if (n.getParent() instanceof Pane)
+			((Pane) n.getParent()).getChildren().remove(n);
 	}
 
 	private void initTable() {
@@ -320,13 +322,7 @@ public class MainController implements Initializable, DisposableBean {
 		addBuyPriceColumn("Buy Price", 200);
 		addColumn("Age", "buyAge", 80);
 
-		TableColumn<MarketItem, Button> copy = new TableColumn<>();
-		copy.setCellFactory(ActionButtonTableCell.forTableColumn("Chart", (MarketItem p) -> {
-			chart(new PriceChart(p, itemsCache).path(p.toDomainItem()));
-			return p;
-
-		}));
-		table.getColumns().add(copy);
+		addChartColumn();
 
 //		addDateColumn("buy_price_min_date");
 //			addDateColumn("buy_price_max_date");
@@ -489,6 +485,19 @@ public class MainController implements Initializable, DisposableBean {
 //		column.setStyle("-fx-alignment: CENTER-RIGHT;");
 	}
 
+	private void addChartColumn() {
+		TableColumn<MarketItem, Button> column = new TableColumn<>();
+		column.setCellFactory(param -> {
+			ActionButtonTableCell<MarketItem> col = new ActionButtonTableCell<>("Chart", (actionEvent, p) -> {
+				chart(actionEvent.isControlDown(), new PriceChart(p, itemsCache).path(p.toDomainItem()));
+				return p;
+			});
+			col.tooltip(new Tooltip("Hold Ctrl for adding"));
+			return col;
+		});
+		table.getColumns().add(column);
+	}
+
 	protected void addCityColumn(String label, int width) {
 		TableColumn<MarketItem, MarketItem> column = new TableColumn(label);
 		column.setPrefWidth(width);
@@ -643,8 +652,8 @@ public class MainController implements Initializable, DisposableBean {
 
 	public void clear(ActionEvent actionEvent) {
 		table.getItems().clear();
-		chartData = null;
-		createChart(new ChartItem[0]);
+		chartData.clear();
+		createChart(false, Collections.emptyList());
 	}
 
 	public void reset(ActionEvent actionEvent) {
@@ -657,7 +666,7 @@ public class MainController implements Initializable, DisposableBean {
 		categories.getSelectionModel().clearSelection();
 
 		chartData = null;
-		createChart(new ChartItem[0]);
+		createChart(false, Collections.emptyList());
 	}
 
 	public void reloadUi(ActionEvent actionEvent) {
@@ -665,7 +674,7 @@ public class MainController implements Initializable, DisposableBean {
 		initTable();
 		table.getItems().addAll(items);
 		table.refresh();
-		createChart(chartData);
+		createChart(false, chartData);
 	}
 
 	public void refreshData(ActionEvent actionEvent) {
@@ -698,16 +707,21 @@ public class MainController implements Initializable, DisposableBean {
 		}
 		PriceChart priceChart = new PriceChart(this);
 
-		chart(priceChart.path(eligibleItems.get(0)));
+		chart(false, priceChart.path(eligibleItems.get(0)));
 	}
 
-	private void chart(String path) {
+	private void chart(boolean add, String path) {
+		checking.setValue(true);
 		CompletableFuture.runAsync(() -> {
 			try {
 				log.info(path);
-				chartData = new RestTemplate().getForObject(path, ChartItem[].class);
+				ChartItem[] newItems = new RestTemplate().getForObject(path, ChartItem[].class);
+				if (!add) {
+					chartData.clear();
+				}
+				chartData.addAll(Arrays.asList(newItems));
 				Platform.runLater(() -> {
-					createChart(chartData);
+					createChart(add, Arrays.asList(newItems));
 				});
 			} finally {
 				Platform.runLater(() -> {
@@ -717,8 +731,10 @@ public class MainController implements Initializable, DisposableBean {
 		});
 	}
 
-	protected void createChart(ChartItem[] items) {
-		centerVBox.getChildren().removeIf(node -> node instanceof XYChartPane);
+	protected void createChart(boolean add, List<ChartItem> items) {
+		if (!add) {
+			centerVBox.getChildren().removeIf(node -> node instanceof XYChartPane);
+		}
 		if (items != null) {
 			for (ChartItem item : items) {
 				centerVBox.getChildren().add(new ChartBuilder(this, item).create());

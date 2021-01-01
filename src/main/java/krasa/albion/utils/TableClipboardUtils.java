@@ -9,7 +9,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.input.*;
-import krasa.albion.web.MarketItem;
+import krasa.albion.market.MarketItem;
 
 import java.text.NumberFormat;
 import java.text.ParseException;

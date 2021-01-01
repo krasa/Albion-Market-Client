@@ -1,4 +1,4 @@
-package krasa.albion.web;
+package krasa.albion.market;
 
 import javafx.scene.control.ListView;
 import krasa.albion.controller.MainController;
@@ -15,7 +15,7 @@ public class PriceChart extends CurrentPrice {
 		super(cities, qualities, tiers, itemsCache);
 	}
 
-	public PriceChart(krasa.albion.web.MarketItem p, ItemsCache itemsCache) {
+	public PriceChart(krasa.albion.market.MarketItem p, ItemsCache itemsCache) {
 		super(p.getCity(), p.getQualityName(), p.getTier(), itemsCache);
 	}
 

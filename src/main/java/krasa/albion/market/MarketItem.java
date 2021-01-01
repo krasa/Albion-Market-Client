@@ -1,4 +1,4 @@
-package krasa.albion.web;
+package krasa.albion.market;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import krasa.albion.domain.Quality;

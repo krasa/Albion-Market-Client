@@ -14,8 +14,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import krasa.albion.Launcher;
 import krasa.albion.domain.City;
+import krasa.albion.market.ChartItem;
 import krasa.albion.service.ItemsCache;
-import krasa.albion.web.ChartItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

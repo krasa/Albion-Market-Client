@@ -1,4 +1,4 @@
-package krasa.albion.web;
+package krasa.albion.market;
 
 import javafx.scene.control.ListView;
 import krasa.albion.commons.MyException;

@@ -41,11 +41,11 @@
 }
 
 .chart-vertical-grid-lines {
-    -fx-stroke: #3278fa;
+    -fx-stroke: #5F5F5F;
 }
 
 .chart-horizontal-grid-lines {
-    -fx-stroke: #3278fa;
+    -fx-stroke: #5F5F5F;
 }
 
 .chart-series-line.series0 {
