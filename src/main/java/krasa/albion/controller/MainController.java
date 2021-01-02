@@ -104,6 +104,8 @@ public class MainController implements Initializable, DisposableBean {
 	public ItemsCache itemsCache;
 	private TableColumn<MarketItem, String> ipColumn;
 	private boolean initialized;
+	public static final String TOOLTIP = "Ctrl - add charts without removing existing ones\n"
+			+ "Shift - add all data into an existing chart\n" + "Ctrl+Shift - add all data into a new chart";
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -140,6 +142,7 @@ public class MainController implements Initializable, DisposableBean {
 			}
 		});
 		charts.setOnMouseClicked(event -> charts(event));
+		charts.setTooltip(new Tooltip(TOOLTIP));
 
 		historyListView.setItems(history.getItems());
 		historyListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -492,7 +495,7 @@ public class MainController implements Initializable, DisposableBean {
 				chart(actionEvent.isControlDown(), actionEvent.isAltDown(), actionEvent.isShiftDown(), new PriceChart(p, itemsCache).path(p.toDomainItem()));
 				return p;
 			});
-			col.tooltip(new Tooltip("Hold Ctrl for adding"));
+			col.tooltip(new Tooltip(MainController.TOOLTIP));
 			return col;
 		});
 		table.getColumns().add(column);
@@ -739,19 +742,14 @@ public class MainController implements Initializable, DisposableBean {
 		if (!data.getItems().isEmpty()) {
 			if (shiftDown) {
 				ObservableList<Node> children = centerVBox.getChildren();
-				if (!children.isEmpty()) {
+				if (children.isEmpty() || ctrlDown) {
+					children.add(0, new ChartBuilder(this, data).create());
+				} else {
 					Node node = children.get(0);
 					MyXYChartPane c = (MyXYChartPane) node;
 					children.remove(c);
 					children.add(0, new ChartBuilder(this, c.getItemsAndAdd(data)).create());
-				} else {
-					children.add(0, new ChartBuilder(this, data).create());
 				}
-			} else if (altDown) {
-				if (!ctrlDown) {
-					removeCharts();
-				}
-				centerVBox.getChildren().add(0, new ChartBuilder(this, data).create());
 			} else if (ctrlDown) {
 				for (ChartItem item : data.getItems()) {
 					centerVBox.getChildren().add(0, new ChartBuilder(this, new MyXYChartPane.ChartData(Collections.singletonList(item))).create());
