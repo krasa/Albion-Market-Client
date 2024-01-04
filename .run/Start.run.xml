@@ -1,16 +1,15 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="Start" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
-        <module name="albion-market-monitor"/>
-        <extension name="coverage">
-            <pattern>
-                <option name="PATTERN" value="krasa.albion.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-        </extension>
-        <option name="SPRING_BOOT_MAIN_CLASS" value="krasa.albion.Launcher"/>
-        <option name="ALTERNATIVE_JRE_PATH"/>
-        <method v="2">
-            <option name="Make" enabled="true"/>
-        </method>
-    </configuration>
+  <configuration default="false" name="Start" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="Albion_Market_Client.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="krasa.albion.Launcher" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="krasa.albion.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
 </component>
