@@ -37,10 +37,7 @@ import krasa.albion.market.MarketItem;
 import krasa.albion.market.PriceChart;
 import krasa.albion.service.ItemsCache;
 import krasa.albion.service.Storage;
-import krasa.albion.utils.MyUtils;
-import krasa.albion.utils.TableClipboardUtils;
-import krasa.albion.utils.ThreadDump;
-import krasa.albion.utils.ThreadDumper;
+import krasa.albion.utils.*;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
@@ -288,10 +285,10 @@ public class MainController implements Initializable, DisposableBean {
 
 		Platform.runLater(() -> {
 			Storage.StorageData load = storage.load(this);
-
 			table.sort();
 			createCharts(load.charts);
 			initialized = true;
+			reloadUi(new ActionEvent());
 		});
 	}
 
@@ -557,7 +554,8 @@ public class MainController implements Initializable, DisposableBean {
 			MarketItem value = param.getValue();
 			return new SimpleStringProperty(itemsCache.getIp(value.getItem_id(), value.getQuality()));
 		});
-		column.setComparator(column.getComparator().reversed());
+		column.setComparator(new NumberComparator());
+//	column.setComparator(column.getComparator().reversed());
 		table.getColumns().add(column);
 		return column;
 	}
